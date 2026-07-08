@@ -1,13 +1,10 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Maisons du Monde - Gestión de Entregas v2</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.38.0/+esm"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <title>Maisons du Monde - Gestión de Entregas</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.38.0"></script>
     <style>
         * {
             margin: 0;
@@ -22,6 +19,100 @@
             padding: 20px;
         }
 
+        .login-screen {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .login-card {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .login-card h1 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .login-card p {
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+        }
+
+        .login-error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .empleados-list {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .empleados-list strong {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
         .container {
             max-width: 1400px;
             margin: 0 auto;
@@ -29,6 +120,7 @@
             border-radius: 12px;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
             overflow: hidden;
+            display: none;
         }
 
         header {
@@ -73,80 +165,6 @@
 
         .logout-btn:hover {
             background: #ff5252;
-        }
-
-        .login-screen {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-
-        .login-card {
-            background: white;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-            width: 100%;
-            max-width: 400px;
-        }
-
-        .login-card h1 {
-            text-align: center;
-            margin-bottom: 30px;
-            color: #333;
-        }
-
-        .login-card .form-group {
-            margin-bottom: 20px;
-        }
-
-        .login-card label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #333;
-        }
-
-        .login-card input {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 6px;
-            font-size: 14px;
-            transition: border-color 0.3s;
-        }
-
-        .login-card input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .login-btn {
-            width: 100%;
-            padding: 12px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.3s;
-        }
-
-        .login-btn:hover {
-            transform: translateY(-2px);
-        }
-
-        .login-error {
-            background: #f8d7da;
-            color: #721c24;
-            padding: 12px;
-            border-radius: 6px;
-            margin-bottom: 20px;
-            display: none;
         }
 
         .tabs {
@@ -211,7 +229,6 @@
         input[type="email"],
         input[type="tel"],
         input[type="date"],
-        input[type="file"],
         select,
         textarea {
             width: 100%;
@@ -309,21 +326,6 @@
             background: #6c757d;
             color: white;
             margin-right: 10px;
-        }
-
-        .btn-success {
-            background: #28a745;
-            color: white;
-        }
-
-        .btn-danger {
-            background: #dc3545;
-            color: white;
-        }
-
-        .btn-warning {
-            background: #ffc107;
-            color: black;
         }
 
         .alert {
@@ -455,104 +457,15 @@
             display: none;
         }
 
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: #667eea;
-        }
-
-        .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #667eea;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
         .grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 15px;
         }
 
-        .status-steps {
-            display: flex;
-            justify-content: space-between;
-            margin: 20px 0;
-            font-size: 12px;
-        }
-
-        .status-step {
-            flex: 1;
-            text-align: center;
-            padding: 10px;
-            border: 2px solid #ddd;
-            border-radius: 6px;
-            background: #f8f9fa;
-        }
-
-        .status-step.active {
-            border-color: #667eea;
-            background: #e7f3ff;
-            color: #0066cc;
-            font-weight: bold;
-        }
-
-        .file-upload-area {
-            border: 2px dashed #667eea;
-            border-radius: 8px;
-            padding: 20px;
-            text-align: center;
-            background: #f8f9fa;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .file-upload-area:hover {
-            border-color: #764ba2;
-            background: #e7f3ff;
-        }
-
-        .file-upload-area.drag-over {
-            border-color: #764ba2;
-            background: #e7f3ff;
-        }
-
-        .preview-image {
-            max-width: 100%;
-            max-height: 300px;
-            border-radius: 6px;
-            margin-top: 10px;
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin: 15px 0;
-        }
-
-        .action-buttons button {
-            flex: 1;
-            min-width: 150px;
-        }
-
         @media (max-width: 768px) {
             .grid {
                 grid-template-columns: 1fr;
-            }
-            .tabs {
-                flex-wrap: wrap;
-            }
-            .tab-button {
-                flex: 1 1 50%;
             }
             header {
                 flex-direction: column;
@@ -560,15 +473,6 @@
             }
             .header-right {
                 margin-top: 20px;
-            }
-            .status-steps {
-                flex-direction: column;
-            }
-            .action-buttons {
-                flex-direction: column;
-            }
-            .action-buttons button {
-                width: 100%;
             }
         }
     </style>
@@ -578,7 +482,7 @@
     <div id="login-screen" class="login-screen">
         <div class="login-card">
             <h1>📦 Maisons du Monde</h1>
-            <p style="text-align: center; color: #666; margin-bottom: 30px;">Sistema de Gestión de Entregas</p>
+            <p>Sistema de Gestión de Entregas</p>
             
             <div class="login-error" id="login-error"></div>
             
@@ -587,16 +491,21 @@
                 <input type="text" id="employee-id" placeholder="Ej: 5739" autocomplete="off">
             </div>
 
-            <button class="login-btn" onclick="login()">Acceder</button>
+            <button class="btn-login" onclick="app.login()">Acceder</button>
 
-            <p style="text-align: center; font-size: 12px; color: #999; margin-top: 20px;">
-                Empleados: 5739, 1974, 5562
-            </p>
+            <div class="empleados-list">
+                <strong>Empleados disponibles:</strong>
+                5739 - Eloy<br>
+                1974 - María del Mar<br>
+                5562 - Marisol<br>
+                0000 - Equipo Logística<br>
+                5663 - Lucía
+            </div>
         </div>
     </div>
 
     <!-- APLICACIÓN PRINCIPAL -->
-    <div id="app-screen" class="container" style="display: none;">
+    <div id="app-screen" class="container">
         <header>
             <div class="header-left">
                 <h1>📦 Maisons du Monde</h1>
@@ -606,15 +515,14 @@
                 <div class="user-info">
                     <strong id="user-name">-</strong>
                     <span id="user-id">-</span>
-                    <button class="logout-btn" onclick="logout()">Logout</button>
+                    <button class="logout-btn" onclick="app.logout()">Logout</button>
                 </div>
             </div>
         </header>
 
         <div class="tabs">
-            <button class="tab-button active" onclick="switchTab('crear')">➕ Crear Pedido</button>
-            <button class="tab-button" onclick="switchTab('listar')">📋 Ver Pedidos</button>
-            <button class="tab-button" onclick="switchTab('historial')">📊 Historial</button>
+            <button class="tab-button active" onclick="app.switchTab('crear')">➕ Crear Pedido</button>
+            <button class="tab-button" onclick="app.switchTab('listar')">📋 Ver Pedidos</button>
         </div>
 
         <!-- TAB 1: CREAR PEDIDO -->
@@ -626,7 +534,6 @@
                 <div class="form-group">
                     <label for="invoice">Número de Factura *</label>
                     <input type="text" id="invoice" placeholder="Ej: FAC2024001" required>
-                    <small>💡 Puedes usar lector de códigos de barras</small>
                 </div>
             </div>
 
@@ -671,7 +578,7 @@
             <div class="form-section">
                 <h3>📦 Logística</h3>
                 <div class="checkbox-group">
-                    <input type="checkbox" id="needs-assembly" onchange="toggleAssembly()">
+                    <input type="checkbox" id="needs-assembly" onchange="app.toggleAssembly()">
                     <label for="needs-assembly">¿Necesita montaje/ensamblaje?</label>
                 </div>
 
@@ -713,7 +620,7 @@
                 </div>
             </div>
 
-            <button class="btn-primary" onclick="crearPedido()">✅ CREAR PEDIDO</button>
+            <button class="btn-primary" onclick="app.crearPedido()">✅ CREAR PEDIDO</button>
         </div>
 
         <!-- TAB 2: LISTAR PEDIDOS -->
@@ -721,8 +628,8 @@
             <h3 style="margin-bottom: 20px;">📋 Pedidos Registrados</h3>
             
             <div class="grid" style="margin-bottom: 20px;">
-                <input type="text" id="filtro-cliente" placeholder="🔍 Buscar cliente o factura..." onkeyup="filtrarPedidos()">
-                <select id="filtro-estado" onchange="filtrarPedidos()">
+                <input type="text" id="filtro-cliente" placeholder="🔍 Buscar cliente o factura..." onkeyup="app.filtrarPedidos()">
+                <select id="filtro-estado" onchange="app.filtrarPedidos()">
                     <option value="">Todos los estados</option>
                     <option value="registrado">Registrado</option>
                     <option value="confirmado">Confirmado</option>
@@ -732,907 +639,388 @@
                 </select>
             </div>
 
-            <div id="loading-table" class="loading hidden">
-                <div class="spinner"></div>
-                Cargando pedidos...
-            </div>
-
             <div class="table-responsive" id="tabla-pedidos"></div>
-        </div>
-
-        <!-- TAB 3: HISTORIAL -->
-        <div id="historial" class="content">
-            <h3 style="margin-bottom: 20px;">📊 Historial de Cambios</h3>
-            
-            <div class="table-responsive" id="tabla-historial"></div>
         </div>
     </div>
 
-    <!-- MODAL: DETALLES Y CAMBIAR ESTADO -->
+    <!-- MODAL: DETALLES -->
     <div id="modal-pedido" class="modal">
         <div class="modal-content">
             <div class="modal-header">Detalles del Pedido</div>
             <div id="modal-body"></div>
             <div class="modal-footer">
-                <button class="btn-secondary" onclick="cerrarModal()">Cerrar</button>
+                <button class="btn-secondary" onclick="app.cerrarModal()">Cerrar</button>
             </div>
         </div>
     </div>
 
-    <!-- MODAL: SUBIR FOTO -->
-    <div id="modal-foto" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">📷 Subir Foto del Albarán</div>
-            
-            <div class="form-group">
-                <label for="delivery-person-name">Nombre de quien recibe</label>
-                <input type="text" id="delivery-person-name" placeholder="Ej: Juan García">
-            </div>
-
-            <div class="file-upload-area" id="file-upload-area" ondrop="handleDrop(event)" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
-                <div style="font-size: 24px;">📸</div>
-                <p><strong>Arrastra la foto aquí</strong> o haz click para seleccionar</p>
-                <small>(La foto debe ser clara y legible)</small>
-                <input type="file" id="file-input" accept="image/*" style="display: none;" onchange="handleFileSelect()">
-            </div>
-
-            <img id="preview-image" class="preview-image hidden">
-
-            <div class="modal-footer">
-                <button class="btn-secondary" onclick="cerrarModalFoto()">Cancelar</button>
-                <button class="btn-success" onclick="subirFoto()" id="btn-subir-foto">Subir Foto</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL: GENERAR PDF -->
-    <div id="modal-pdf" class="modal">
-        <div class="modal-content">
-            <div id="pdf-content" style="padding: 20px; border: 1px solid #ddd; background: white;"></div>
-            <div class="modal-footer">
-                <button class="btn-secondary" onclick="cerrarModalPDF()">Cancelar</button>
-                <button class="btn-primary" onclick="descargarPDF()">📥 Descargar PDF</button>
-            </div>
-        </div>
-    </div>
-
-    <script type="module">
-        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.38.0/+esm';
-
-        // ⚠️ REEMPLAZA CON TUS CREDENCIALES
+    <script>
+        // Inicializar Supabase
+        const { createClient } = window.supabase;
         const SUPABASE_URL = 'https://hxjlxvfsbtoaz8haulk.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_0G8WcTMGjN0QAMdRXqpvLA_pWEYt9c6';
-
         const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // VARIABLES GLOBALES
-        let currentUser = null;
-        let poblacionesData = [];
-        let pedidosData = [];
-        let empleadosData = [];
-        let currentPedido = null;
-        let currentFile = null;
+        // TABLA DE EMPLEADOS (LOCAL)
+        const EMPLEADOS = {
+            '5739': 'Eloy',
+            '1974': 'María del Mar',
+            '5562': 'Marisol',
+            '0000': 'Equipo Logística',
+            '5663': 'Lucía - Administradora'
+        };
 
-        // LOGIN
-        window.login = async function() {
-            const employeeId = document.getElementById('employee-id').value.trim();
-            
-            if (!employeeId) {
-                mostrarLoginError('Ingresa tu número de empleado');
-                return;
-            }
+        // Objeto global de la app
+        const app = {
+            currentUser: null,
+            poblacionesData: [],
+            pedidosData: [],
 
-            // Buscar empleado
-            const { data, error } = await supabase
-                .from('employees')
-                .select('*')
-                .eq('employee_id', employeeId)
-                .single();
-
-            if (error || !data) {
-                mostrarLoginError('Número de empleado no encontrado');
-                return;
-            }
-
-            currentUser = data;
-            document.getElementById('login-screen').style.display = 'none';
-            document.getElementById('app-screen').style.display = 'block';
-            document.getElementById('user-name').textContent = currentUser.name;
-            document.getElementById('user-id').textContent = `(${currentUser.employee_id})`;
-
-            await init();
-        }
-
-        window.logout = function() {
-            currentUser = null;
-            document.getElementById('app-screen').style.display = 'none';
-            document.getElementById('login-screen').style.display = 'flex';
-            document.getElementById('employee-id').value = '';
-            document.getElementById('login-error').style.display = 'none';
-        }
-
-        function mostrarLoginError(msg) {
-            const error = document.getElementById('login-error');
-            error.textContent = msg;
-            error.style.display = 'flex';
-            setTimeout(() => { error.style.display = 'none'; }, 5000);
-        }
-
-        // INICIALIZAR
-        async function init() {
-            await cargarPoblaciones();
-            await cargarEmpleados();
-            await cargarPedidos();
-        }
-
-        // CARGAR POBLACIONES
-        async function cargarPoblaciones() {
-            const { data, error } = await supabase
-                .from('populations')
-                .select('*')
-                .order('name');
-
-            if (error) {
-                console.error(error);
-                return;
-            }
-
-            poblacionesData = data || [];
-            const select = document.getElementById('population');
-            select.innerHTML = '<option value="">Selecciona población...</option>';
-            
-            poblacionesData.forEach(p => {
-                const option = document.createElement('option');
-                option.value = p.id;
-                option.textContent = `${p.name} (${p.zone})`;
-                select.appendChild(option);
-            });
-
-            select.addEventListener('change', actualizarCostes);
-        }
-
-        // CARGAR EMPLEADOS
-        async function cargarEmpleados() {
-            const { data, error } = await supabase
-                .from('employees')
-                .select('*')
-                .eq('active', true);
-
-            if (error) {
-                console.error(error);
-                return;
-            }
-
-            empleadosData = data || [];
-        }
-
-        // ACTUALIZAR COSTES
-        function actualizarCostes() {
-            const poblacionId = document.getElementById('population').value;
-            const poblacion = poblacionesData.find(p => p.id === poblacionId);
-
-            if (poblacion) {
-                document.getElementById('postal-code').value = poblacion.name;
+            // LOGIN
+            login: function() {
+                const employeeId = document.getElementById('employee-id').value.trim();
                 
-                const shipping = parseFloat(poblacion.shipping_cost);
-                let assembly = 0;
-
-                if (document.getElementById('needs-assembly').checked) {
-                    assembly = parseFloat(poblacion.assembly_cost);
-                    document.getElementById('cost-assembly-row').style.display = 'flex';
-                    document.getElementById('cost-assembly').textContent = assembly.toFixed(2) + '€';
-                } else {
-                    document.getElementById('cost-assembly-row').style.display = 'none';
+                if (!employeeId) {
+                    this.mostrarLoginError('Ingresa tu número de empleado');
+                    return;
                 }
 
-                document.getElementById('cost-shipping').textContent = shipping.toFixed(2) + '€';
-                document.getElementById('cost-total').textContent = (shipping + assembly).toFixed(2) + '€';
-            }
-        }
+                if (!EMPLEADOS[employeeId]) {
+                    this.mostrarLoginError('Número de empleado no válido');
+                    return;
+                }
 
-        // TOGGLE MONTAJE
-        window.toggleAssembly = function() {
-            const checked = document.getElementById('needs-assembly').checked;
-            document.getElementById('assembly-time-group').classList.toggle('hidden', !checked);
-            actualizarCostes();
-        }
+                // Login exitoso
+                this.currentUser = {
+                    id: employeeId,
+                    name: EMPLEADOS[employeeId]
+                };
 
-        // CREAR PEDIDO
-        window.crearPedido = async function() {
-            const invoice = document.getElementById('invoice').value.trim().toUpperCase();
-            const customerName = document.getElementById('customer-name').value.trim();
-            const customerEmail = document.getElementById('customer-email').value.trim();
-            const customerPhone = document.getElementById('customer-phone').value.trim();
-            const address = document.getElementById('address').value.trim();
-            const populationId = document.getElementById('population').value;
-            const needsAssembly = document.getElementById('needs-assembly').checked;
-            const assemblyTime = needsAssembly ? parseInt(document.getElementById('assembly-time').value) : null;
-            const hasElevator = document.getElementById('has-elevator').checked;
-            const observations = document.getElementById('observations').value.trim();
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('app-screen').style.display = 'block';
+                document.getElementById('user-name').textContent = this.currentUser.name;
+                document.getElementById('user-id').textContent = `(${this.currentUser.id})`;
 
-            // VALIDACIONES
-            if (!invoice) return mostrarMensaje('crear', 'Número de factura obligatorio', 'error');
-            if (!customerName) return mostrarMensaje('crear', 'Nombre del cliente obligatorio', 'error');
-            if (!address) return mostrarMensaje('crear', 'Dirección obligatoria', 'error');
-            if (!populationId) return mostrarMensaje('crear', 'Población obligatoria', 'error');
+                this.init();
+            },
 
-            const poblacion = poblacionesData.find(p => p.id === populationId);
-            const shippingCost = parseFloat(poblacion.shipping_cost);
-            const assemblyCost = needsAssembly ? parseFloat(poblacion.assembly_cost) : 0;
+            logout: function() {
+                this.currentUser = null;
+                document.getElementById('app-screen').style.display = 'none';
+                document.getElementById('login-screen').style.display = 'flex';
+                document.getElementById('employee-id').value = '';
+                document.getElementById('login-error').style.display = 'none';
+            },
 
-            const { data, error } = await supabase
-                .from('orders')
-                .insert([
-                    {
-                        invoice_number: invoice,
-                        created_by_employee_id: currentUser.employee_id,
-                        customer_name: customerName,
-                        customer_email: customerEmail || null,
-                        customer_phone: customerPhone || null,
-                        address: address,
-                        population_id: populationId,
-                        shipping_cost: shippingCost,
-                        assembly_cost: assemblyCost,
-                        needs_assembly: needsAssembly,
-                        assembly_time: assemblyTime,
-                        has_elevator: hasElevator,
-                        observations: observations || null,
-                        status: 'registrado'
+            mostrarLoginError: function(msg) {
+                const error = document.getElementById('login-error');
+                error.textContent = msg;
+                error.style.display = 'flex';
+                setTimeout(() => { error.style.display = 'none'; }, 5000);
+            },
+
+            // INICIALIZAR
+            init: async function() {
+                await this.cargarPoblaciones();
+                await this.cargarPedidos();
+            },
+
+            // CARGAR POBLACIONES
+            cargarPoblaciones: async function() {
+                try {
+                    const { data, error } = await supabase
+                        .from('populations')
+                        .select('*')
+                        .order('name');
+
+                    if (error) throw error;
+
+                    this.poblacionesData = data || [];
+                    const select = document.getElementById('population');
+                    select.innerHTML = '<option value="">Selecciona población...</option>';
+                    
+                    this.poblacionesData.forEach(p => {
+                        const option = document.createElement('option');
+                        option.value = p.id;
+                        option.textContent = `${p.name} (${p.zone})`;
+                        select.appendChild(option);
+                    });
+
+                    select.addEventListener('change', () => this.actualizarCostes());
+                } catch (err) {
+                    console.error('Error cargando poblaciones:', err);
+                    this.mostrarMensaje('crear', 'Error cargando poblaciones', 'error');
+                }
+            },
+
+            // ACTUALIZAR COSTES
+            actualizarCostes: function() {
+                const poblacionId = document.getElementById('population').value;
+                const poblacion = this.poblacionesData.find(p => p.id === poblacionId);
+
+                if (poblacion) {
+                    document.getElementById('postal-code').value = poblacion.name;
+                    
+                    const shipping = parseFloat(poblacion.shipping_cost);
+                    let assembly = 0;
+
+                    if (document.getElementById('needs-assembly').checked) {
+                        assembly = parseFloat(poblacion.assembly_cost);
+                        document.getElementById('cost-assembly-row').style.display = 'flex';
+                        document.getElementById('cost-assembly').textContent = assembly.toFixed(2) + '€';
+                    } else {
+                        document.getElementById('cost-assembly-row').style.display = 'none';
                     }
-                ])
-                .select();
 
-            if (error) {
-                console.error(error);
-                return mostrarMensaje('crear', `Error: ${error.message}`, 'error');
-            }
+                    document.getElementById('cost-shipping').textContent = shipping.toFixed(2) + '€';
+                    document.getElementById('cost-total').textContent = (shipping + assembly).toFixed(2) + '€';
+                }
+            },
 
-            const pedido = data[0];
+            // TOGGLE MONTAJE
+            toggleAssembly: function() {
+                const checked = document.getElementById('needs-assembly').checked;
+                document.getElementById('assembly-time-group').classList.toggle('hidden', !checked);
+                this.actualizarCostes();
+            },
 
-            // ENVIAR EMAIL A LOGÍSTICA
-            await enviarEmailLogistica(pedido);
+            // CREAR PEDIDO
+            crearPedido: async function() {
+                const invoice = document.getElementById('invoice').value.trim().toUpperCase();
+                const customerName = document.getElementById('customer-name').value.trim();
+                const customerEmail = document.getElementById('customer-email').value.trim();
+                const customerPhone = document.getElementById('customer-phone').value.trim();
+                const address = document.getElementById('address').value.trim();
+                const populationId = document.getElementById('population').value;
+                const needsAssembly = document.getElementById('needs-assembly').checked;
+                const assemblyTime = needsAssembly ? parseInt(document.getElementById('assembly-time').value) : null;
+                const hasElevator = document.getElementById('has-elevator').checked;
+                const observations = document.getElementById('observations').value.trim();
 
-            mostrarMensaje('crear', `✅ Pedido creado: ${pedido.invoice_number} | Total: ${(shippingCost + assemblyCost).toFixed(2)}€`, 'success');
-            
-            // LIMPIAR FORMULARIO
-            limpiarFormularioPedido();
+                if (!invoice) return this.mostrarMensaje('crear', 'Número de factura obligatorio', 'error');
+                if (!customerName) return this.mostrarMensaje('crear', 'Nombre del cliente obligatorio', 'error');
+                if (!address) return this.mostrarMensaje('crear', 'Dirección obligatoria', 'error');
+                if (!populationId) return this.mostrarMensaje('crear', 'Población obligatoria', 'error');
 
-            // RECARGAR
-            await cargarPedidos();
-        }
+                try {
+                    const poblacion = this.poblacionesData.find(p => p.id === populationId);
+                    const shippingCost = parseFloat(poblacion.shipping_cost);
+                    const assemblyCost = needsAssembly ? parseFloat(poblacion.assembly_cost) : 0;
 
-        function limpiarFormularioPedido() {
-            document.getElementById('invoice').value = '';
-            document.getElementById('customer-name').value = '';
-            document.getElementById('customer-email').value = '';
-            document.getElementById('customer-phone').value = '';
-            document.getElementById('address').value = '';
-            document.getElementById('population').value = '';
-            document.getElementById('postal-code').value = '';
-            document.getElementById('needs-assembly').checked = false;
-            document.getElementById('assembly-time-group').classList.add('hidden');
-            document.getElementById('has-elevator').checked = false;
-            document.getElementById('observations').value = '';
-            actualizarCostes();
-        }
+                    const { data, error } = await supabase
+                        .from('orders')
+                        .insert([
+                            {
+                                invoice_number: invoice,
+                                created_by_employee_id: this.currentUser.id,
+                                customer_name: customerName,
+                                customer_email: customerEmail || null,
+                                customer_phone: customerPhone || null,
+                                address: address,
+                                population_id: populationId,
+                                shipping_cost: shippingCost,
+                                assembly_cost: assemblyCost,
+                                needs_assembly: needsAssembly,
+                                assembly_time: assemblyTime,
+                                has_elevator: hasElevator,
+                                observations: observations || null,
+                                status: 'registrado'
+                            }
+                        ])
+                        .select();
 
-        // ENVIAR EMAIL A LOGÍSTICA
-        async function enviarEmailLogistica(pedido) {
-            const { data: emails } = await supabase
-                .from('logistics_emails')
-                .select('email')
-                .eq('active', true);
+                    if (error) throw error;
 
-            if (!emails || emails.length === 0) return;
+                    this.mostrarMensaje('crear', `✅ Pedido creado: ${data[0].invoice_number}`, 'success');
+                    this.limpiarFormularioPedido();
+                    await this.cargarPedidos();
+                } catch (err) {
+                    console.error(err);
+                    this.mostrarMensaje('crear', `Error: ${err.message}`, 'error');
+                }
+            },
 
-            const emailList = emails.map(e => e.email).join(', ');
-            
-            // Por ahora, mostramos un mensaje que indica que se enviería
-            console.log(`📧 Email notificación enviado a: ${emailList}`);
-            
-            // NOTA: Para usar Resend real, necesitas una Supabase Edge Function
-            // De momento, aquí solo registramos que se "envió"
-        }
+            limpiarFormularioPedido: function() {
+                document.getElementById('invoice').value = '';
+                document.getElementById('customer-name').value = '';
+                document.getElementById('customer-email').value = '';
+                document.getElementById('customer-phone').value = '';
+                document.getElementById('address').value = '';
+                document.getElementById('population').value = '';
+                document.getElementById('postal-code').value = '';
+                document.getElementById('needs-assembly').checked = false;
+                document.getElementById('assembly-time-group').classList.add('hidden');
+                document.getElementById('has-elevator').checked = false;
+                document.getElementById('observations').value = '';
+                this.actualizarCostes();
+            },
 
-        // CARGAR PEDIDOS
-        async function cargarPedidos() {
-            document.getElementById('tabla-pedidos').innerHTML = '<div class="loading"><div class="spinner"></div>Cargando...</div>';
+            // CARGAR PEDIDOS
+            cargarPedidos: async function() {
+                try {
+                    const { data, error } = await supabase
+                        .from('orders')
+                        .select(`
+                            id,
+                            invoice_number,
+                            customer_name,
+                            status,
+                            shipping_cost,
+                            assembly_cost,
+                            created_at,
+                            population_id,
+                            populations(name, zone)
+                        `)
+                        .order('created_at', { ascending: false });
 
-            const { data, error } = await supabase
-                .from('orders')
-                .select(`
-                    id,
-                    invoice_number,
-                    customer_name,
-                    status,
-                    shipping_cost,
-                    assembly_cost,
-                    created_at,
-                    population_id,
-                    populations(name, zone)
-                `)
-                .order('created_at', { ascending: false });
+                    if (error) throw error;
+                    this.pedidosData = data || [];
+                    this.mostrarPedidos(this.pedidosData);
+                } catch (err) {
+                    console.error(err);
+                    document.getElementById('tabla-pedidos').innerHTML = `<div class="alert alert-error">Error: ${err.message}</div>`;
+                }
+            },
 
-            if (error) {
-                console.error(error);
-                document.getElementById('tabla-pedidos').innerHTML = `<div class="alert alert-error">Error: ${error.message}</div>`;
-                return;
-            }
+            // MOSTRAR PEDIDOS
+            mostrarPedidos: function(pedidos) {
+                if (pedidos.length === 0) {
+                    document.getElementById('tabla-pedidos').innerHTML = '<p style="text-align: center; padding: 40px; color: #999;">Sin pedidos registrados</p>';
+                    return;
+                }
 
-            pedidosData = data || [];
-            mostrarPedidos(pedidosData);
-        }
-
-        // MOSTRAR PEDIDOS
-        function mostrarPedidos(pedidos) {
-            if (pedidos.length === 0) {
-                document.getElementById('tabla-pedidos').innerHTML = '<p style="text-align: center; padding: 40px; color: #999;">Sin pedidos registrados</p>';
-                return;
-            }
-
-            let html = `
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Factura</th>
-                            <th>Cliente</th>
-                            <th>Población</th>
-                            <th>Estado</th>
-                            <th>Total</th>
-                            <th>Fecha</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-            `;
-
-            pedidos.forEach(p => {
-                const total = (p.shipping_cost + p.assembly_cost).toFixed(2);
-                const fecha = new Date(p.created_at).toLocaleDateString('es-ES');
-                const badge = getStatusBadge(p.status);
-
-                html += `
-                    <tr>
-                        <td><strong>${p.invoice_number}</strong></td>
-                        <td>${p.customer_name}</td>
-                        <td>${p.populations?.zone || '-'}</td>
-                        <td>${badge}</td>
-                        <td>${total}€</td>
-                        <td>${fecha}</td>
-                        <td>
-                            <button class="btn-secondary" style="padding: 6px 12px; font-size: 12px;" onclick="verDetalles('${p.id}')">Ver</button>
-                        </td>
-                    </tr>
+                let html = `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Factura</th>
+                                <th>Cliente</th>
+                                <th>Población</th>
+                                <th>Estado</th>
+                                <th>Total</th>
+                                <th>Fecha</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
                 `;
-            });
 
-            html += `
-                    </tbody>
-                </table>
-            `;
+                pedidos.forEach(p => {
+                    const total = (p.shipping_cost + p.assembly_cost).toFixed(2);
+                    const fecha = new Date(p.created_at).toLocaleDateString('es-ES');
+                    const badge = this.getStatusBadge(p.status);
 
-            document.getElementById('tabla-pedidos').innerHTML = html;
-        }
-
-        // VER DETALLES
-        window.verDetalles = async function(pedidoId) {
-            const { data, error } = await supabase
-                .from('orders')
-                .select(`
-                    *,
-                    populations(name, zone, shipping_cost, assembly_cost)
-                `)
-                .eq('id', pedidoId)
-                .single();
-
-            if (error) {
-                console.error(error);
-                return;
-            }
-
-            currentPedido = data;
-            const total = (data.shipping_cost + data.assembly_cost).toFixed(2);
-            const fecha = new Date(data.created_at).toLocaleDateString('es-ES');
-
-            let html = `
-                <div style="font-size: 14px; line-height: 2;">
-                    <p><strong>Factura:</strong> ${data.invoice_number}</p>
-                    <p><strong>Estado:</strong> ${getStatusBadge(data.status)}</p>
-                    <p><strong>Fecha creación:</strong> ${fecha}</p>
-                    <hr>
-                    <p><strong>Cliente:</strong> ${data.customer_name}</p>
-                    <p><strong>Email:</strong> ${data.customer_email || '-'}</p>
-                    <p><strong>Teléfono:</strong> ${data.customer_phone || '-'}</p>
-                    <hr>
-                    <p><strong>Dirección:</strong> ${data.address}</p>
-                    <p><strong>Población:</strong> ${data.populations?.name}</p>
-                    <hr>
-                    <p><strong>Porte:</strong> ${data.shipping_cost.toFixed(2)}€</p>
-                    <p><strong>Montaje:</strong> ${data.assembly_cost.toFixed(2)}€</p>
-                    <p><strong style="font-size: 16px;">TOTAL: ${total}€</strong></p>
-                    ${data.observations ? `<hr><p><strong>Observaciones:</strong> ${data.observations}</p>` : ''}
-                    ${data.delivery_date ? `<hr><p><strong>Fecha de entrega:</strong> ${new Date(data.delivery_date).toLocaleDateString('es-ES')}</p>` : ''}
-            `;
-
-            if (data.delivery_photo_url) {
-                html += `<hr><p><strong>Foto albarán:</strong> <a href="${data.delivery_photo_url}" target="_blank">Ver foto</a></p>`;
-            }
-
-            html += `
-                    <hr style="margin-top: 20px;">
-                    <h4 style="margin-top: 20px;">Cambiar Estado</h4>
-                    <div class="form-group">
-                        <label>Número de empleado (para registrar cambio)</label>
-                        <input type="text" id="employee-id-change" placeholder="Tu número de empleado">
-                    </div>
-            `;
-
-            // Mostrar botones según estado actual
-            if (data.status === 'registrado') {
-                html += `
-                    <button class="btn-primary" onclick="abrirModal()" style="width: 100%;">
-                        ✅ Generar PDF + Confirmar fecha
-                    </button>
-                `;
-            } else if (data.status === 'confirmado') {
-                const hoy = new Date().toISOString().split('T')[0];
-                const fechaEntrega = data.delivery_date.split('T')[0];
-                
-                if (fechaEntrega === hoy) {
                     html += `
-                        <button class="btn-warning" onclick="cambiarAEnReparto()" style="width: 100%; margin-top: 10px;">
-                            🚗 Marcar como "En Reparto"
-                        </button>
-                    `;
-                }
-            } else if (data.status === 'en_reparto') {
-                html += `
-                    <button class="btn-success" onclick="abrirModalFoto()" style="width: 100%; margin-top: 10px;">
-                        📷 Subir Foto (Marcar Entregado)
-                    </button>
-                    <button class="btn-danger" onclick="marcarNoDisponible()" style="width: 100%; margin-top: 10px;">
-                        ❌ Cliente no disponible
-                    </button>
-                `;
-            }
-
-            html += `</div>`;
-
-            document.getElementById('modal-body').innerHTML = html;
-            document.getElementById('modal-pedido').classList.add('active');
-        }
-
-        function abrirModal() {
-            const employeeIdInput = document.getElementById('employee-id-change').value.trim();
-            if (!employeeIdInput) {
-                alert('Debes ingresar tu número de empleado');
-                return;
-            }
-
-            if (employeeIdInput !== currentUser.employee_id) {
-                alert('El número de empleado no coincide');
-                return;
-            }
-
-            generarPDF();
-            cerrarModal();
-        }
-
-        function abrirModalFoto() {
-            const employeeIdInput = document.getElementById('employee-id-change').value.trim();
-            if (!employeeIdInput) {
-                alert('Debes ingresar tu número de empleado');
-                return;
-            }
-
-            if (employeeIdInput !== currentUser.employee_id) {
-                alert('El número de empleado no coincide');
-                return;
-            }
-
-            cerrarModal();
-            document.getElementById('modal-foto').classList.add('active');
-        }
-
-        // GENERAR PDF
-        function generarPDF() {
-            if (!currentPedido) return;
-
-            const pdf = new jsPDF();
-            const pageWidth = pdf.internal.pageSize.getWidth();
-            const pageHeight = pdf.internal.pageSize.getHeight();
-            let yPos = 20;
-
-            // Encabezado
-            pdf.setFontSize(20);
-            pdf.text('ALBARÁN DE ENTREGA', pageWidth / 2, yPos, { align: 'center' });
-            yPos += 15;
-
-            // Línea separadora
-            pdf.line(10, yPos, pageWidth - 10, yPos);
-            yPos += 10;
-
-            // Datos del pedido
-            pdf.setFontSize(12);
-            pdf.text(`Número de Factura: ${currentPedido.invoice_number}`, 15, yPos);
-            yPos += 7;
-            pdf.text(`Fecha: ${new Date().toLocaleDateString('es-ES')}`, 15, yPos);
-            yPos += 12;
-
-            // Datos del cliente
-            pdf.setFontSize(14);
-            pdf.text('DATOS DEL CLIENTE', 15, yPos);
-            yPos += 8;
-            pdf.setFontSize(11);
-            pdf.text(`Nombre: ${currentPedido.customer_name}`, 15, yPos);
-            yPos += 6;
-            pdf.text(`Teléfono: ${currentPedido.customer_phone || '-'}`, 15, yPos);
-            yPos += 6;
-            pdf.text(`Email: ${currentPedido.customer_email || '-'}`, 15, yPos);
-            yPos += 12;
-
-            // Domicilio
-            pdf.setFontSize(14);
-            pdf.text('DOMICILIO DE ENTREGA', 15, yPos);
-            yPos += 8;
-            pdf.setFontSize(11);
-            pdf.text(`Dirección: ${currentPedido.address}`, 15, yPos);
-            yPos += 6;
-            pdf.text(`Población: ${currentPedido.populations?.name || '-'}`, 15, yPos);
-            yPos += 12;
-
-            // Observaciones
-            if (currentPedido.observations) {
-                pdf.setFontSize(14);
-                pdf.text('OBSERVACIONES', 15, yPos);
-                yPos += 8;
-                pdf.setFontSize(10);
-                const lineas = pdf.splitTextToSize(currentPedido.observations, pageWidth - 30);
-                pdf.text(lineas, 15, yPos);
-                yPos += lineas.length * 5 + 5;
-            }
-
-            yPos += 10;
-            pdf.line(10, yPos, pageWidth - 10, yPos);
-            yPos += 15;
-
-            // Campos para firma
-            pdf.setFontSize(11);
-            pdf.text('ID Persona que recibe: ________________________  Fecha: __________', 15, yPos);
-            yPos += 15;
-            pdf.text('Firma del cliente: ________________________', 15, yPos);
-            yPos += 15;
-            pdf.text('Firma del repartidor: ________________________', 15, yPos);
-
-            // Mostrar en modal para imprimir
-            const canvas = document.createElement('canvas');
-            canvas.innerHTML = `
-                <div style="padding: 20px; font-family: Arial; line-height: 1.6;">
-                    <h1 style="text-align: center;">ALBARÁN DE ENTREGA</h1>
-                    <p><strong>Factura:</strong> ${currentPedido.invoice_number}</p>
-                    <p><strong>Fecha:</strong> ${new Date().toLocaleDateString('es-ES')}</p>
-                    <hr>
-                    <h3>DATOS DEL CLIENTE</h3>
-                    <p><strong>Nombre:</strong> ${currentPedido.customer_name}</p>
-                    <p><strong>Teléfono:</strong> ${currentPedido.customer_phone || '-'}</p>
-                    <p><strong>Email:</strong> ${currentPedido.customer_email || '-'}</p>
-                    <hr>
-                    <h3>DOMICILIO DE ENTREGA</h3>
-                    <p><strong>Dirección:</strong> ${currentPedido.address}</p>
-                    <p><strong>Población:</strong> ${currentPedido.populations?.name || '-'}</p>
-                    ${currentPedido.observations ? `<hr><h3>OBSERVACIONES</h3><p>${currentPedido.observations}</p>` : ''}
-                    <hr style="margin: 30px 0;">
-                    <p>ID Persona que recibe: ________________________  Fecha: __________</p>
-                    <p>Firma del cliente: ________________________</p>
-                    <p>Firma del repartidor: ________________________</p>
-                </div>
-            `;
-
-            // Mostrar en modal
-            document.getElementById('pdf-content').innerHTML = canvas.innerHTML;
-            document.getElementById('modal-pdf').classList.add('active');
-
-            // Guardar PDF para descarga
-            window.pdfDescargar = function() {
-                pdf.save(`Albarani_${currentPedido.invoice_number}.pdf`);
-            }
-        }
-
-        window.descargarPDF = function() {
-            window.pdfDescargar();
-        }
-
-        // CAMBIAR A EN REPARTO
-        window.cambiarAEnReparto = async function() {
-            const employeeId = document.getElementById('employee-id-change').value.trim();
-            if (employeeId !== currentUser.employee_id) {
-                alert('Número de empleado incorrecto');
-                return;
-            }
-
-            const { error } = await supabase
-                .from('orders')
-                .update({ status: 'en_reparto', status_updated_at: new Date() })
-                .eq('id', currentPedido.id);
-
-            if (error) {
-                console.error(error);
-                alert('Error al cambiar estado');
-                return;
-            }
-
-            // Registrar en historial
-            await registrarCambioEstado(currentPedido.id, 'confirmado', 'en_reparto', employeeId);
-
-            alert('Pedido marcado como "En Reparto"');
-            cerrarModal();
-            await cargarPedidos();
-        }
-
-        // MARCAR NO DISPONIBLE
-        window.marcarNoDisponible = async function() {
-            const employeeId = document.getElementById('employee-id-change').value.trim();
-            if (employeeId !== currentUser.employee_id) {
-                alert('Número de empleado incorrecto');
-                return;
-            }
-
-            const { error } = await supabase
-                .from('orders')
-                .update({ status: 'no_disponible', status_updated_at: new Date() })
-                .eq('id', currentPedido.id);
-
-            if (error) {
-                console.error(error);
-                alert('Error al cambiar estado');
-                return;
-            }
-
-            // Registrar en historial
-            await registrarCambioEstado(currentPedido.id, 'en_reparto', 'no_disponible', employeeId);
-
-            alert('Pedido marcado como "No Disponible" - Contactar con cliente');
-            cerrarModal();
-            await cargarPedidos();
-        }
-
-        // SUBIR FOTO
-        window.subirFoto = async function() {
-            if (!currentFile) {
-                alert('Selecciona una foto');
-                return;
-            }
-
-            const deliveryPersonName = document.getElementById('delivery-person-name').value.trim();
-            if (!deliveryPersonName) {
-                alert('Debes ingresar el nombre de quien recibe');
-                return;
-            }
-
-            const fileName = `${currentPedido.id}_${Date.now()}.jpg`;
-
-            // Subir a Storage
-            const { error: uploadError } = await supabase.storage
-                .from('albaran-photos')
-                .upload(fileName, currentFile);
-
-            if (uploadError) {
-                console.error(uploadError);
-                alert('Error al subir foto');
-                return;
-            }
-
-            // Obtener URL pública
-            const { data: { publicUrl } } = supabase.storage
-                .from('albaran-photos')
-                .getPublicUrl(fileName);
-
-            // Actualizar pedido
-            const { error: updateError } = await supabase
-                .from('orders')
-                .update({
-                    status: 'entregado',
-                    delivery_photo_url: publicUrl,
-                    delivery_person_name: deliveryPersonName,
-                    delivery_photo_uploaded_at: new Date(),
-                    status_updated_at: new Date()
-                })
-                .eq('id', currentPedido.id);
-
-            if (updateError) {
-                console.error(updateError);
-                alert('Error al actualizar pedido');
-                return;
-            }
-
-            // Registrar en historial
-            await registrarCambioEstado(currentPedido.id, 'en_reparto', 'entregado', currentUser.employee_id);
-
-            alert('✅ Pedido marcado como ENTREGADO');
-            cerrarModalFoto();
-            await cargarPedidos();
-        }
-
-        // FUNCIONES DE ARCHIVO
-        window.handleDragOver = function(e) {
-            e.preventDefault();
-            document.getElementById('file-upload-area').classList.add('drag-over');
-        }
-
-        window.handleDragLeave = function(e) {
-            document.getElementById('file-upload-area').classList.remove('drag-over');
-        }
-
-        window.handleDrop = function(e) {
-            e.preventDefault();
-            document.getElementById('file-upload-area').classList.remove('drag-over');
-            const files = e.dataTransfer.files;
-            if (files.length > 0) {
-                currentFile = files[0];
-                mostrarPreview(files[0]);
-            }
-        }
-
-        document.addEventListener('click', function(e) {
-            if (e.target.id === 'file-upload-area' || e.target.closest('#file-upload-area')) {
-                document.getElementById('file-input').click();
-            }
-        });
-
-        window.handleFileSelect = function() {
-            const file = document.getElementById('file-input').files[0];
-            if (file) {
-                currentFile = file;
-                mostrarPreview(file);
-            }
-        }
-
-        function mostrarPreview(file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                document.getElementById('preview-image').src = e.target.result;
-                document.getElementById('preview-image').classList.remove('hidden');
-            }
-            reader.readAsDataURL(file);
-        }
-
-        // REGISTRAR CAMBIO EN HISTORIAL
-        async function registrarCambioEstado(orderId, oldStatus, newStatus, employeeId) {
-            const { error } = await supabase
-                .from('order_status_history')
-                .insert([
-                    {
-                        order_id: orderId,
-                        old_status: oldStatus,
-                        new_status: newStatus,
-                        changed_by_employee_id: employeeId,
-                        changed_at: new Date()
-                    }
-                ]);
-
-            if (error) console.error('Error registrando cambio:', error);
-        }
-
-        // FILTRAR PEDIDOS
-        window.filtrarPedidos = function() {
-            const filtro = document.getElementById('filtro-cliente').value.toLowerCase();
-            const estado = document.getElementById('filtro-estado').value;
-
-            let filtrados = pedidosData.filter(p => 
-                (p.customer_name.toLowerCase().includes(filtro) || 
-                p.invoice_number.toLowerCase().includes(filtro)) &&
-                (!estado || p.status === estado)
-            );
-
-            mostrarPedidos(filtrados);
-        }
-
-        // CARGAR HISTORIAL
-        async function cargarHistorial() {
-            const { data, error } = await supabase
-                .from('order_status_history')
-                .select(`
-                    *,
-                    orders(invoice_number)
-                `)
-                .order('changed_at', { ascending: false });
-
-            if (error) {
-                console.error(error);
-                document.getElementById('tabla-historial').innerHTML = `<div class="alert alert-error">Error: ${error.message}</div>`;
-                return;
-            }
-
-            if (!data || data.length === 0) {
-                document.getElementById('tabla-historial').innerHTML = '<p style="text-align: center; padding: 40px;">Sin historial</p>';
-                return;
-            }
-
-            let html = `
-                <table>
-                    <thead>
                         <tr>
-                            <th>Factura</th>
-                            <th>Estado Anterior</th>
-                            <th>Estado Nuevo</th>
-                            <th>Empleado</th>
-                            <th>Fecha/Hora</th>
+                            <td><strong>${p.invoice_number}</strong></td>
+                            <td>${p.customer_name}</td>
+                            <td>${p.populations?.zone || '-'}</td>
+                            <td>${badge}</td>
+                            <td>${total}€</td>
+                            <td>${fecha}</td>
+                            <td>
+                                <button class="btn-secondary" style="padding: 6px 12px; font-size: 12px;" onclick="app.verDetalles('${p.id}')">Ver</button>
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody>
-            `;
+                    `;
+                });
 
-            data.forEach(h => {
-                const fecha = new Date(h.changed_at).toLocaleString('es-ES');
-                html += `
-                    <tr>
-                        <td><strong>${h.orders?.invoice_number || '-'}</strong></td>
-                        <td>${h.old_status || '-'}</td>
-                        <td>${h.new_status}</td>
-                        <td>${h.changed_by_employee_id}</td>
-                        <td>${fecha}</td>
-                    </tr>
-                `;
-            });
+                html += `</tbody></table>`;
+                document.getElementById('tabla-pedidos').innerHTML = html;
+            },
 
-            html += `</tbody></table>`;
-            document.getElementById('tabla-historial').innerHTML = html;
-        }
+            // VER DETALLES
+            verDetalles: async function(pedidoId) {
+                try {
+                    const { data, error } = await supabase
+                        .from('orders')
+                        .select(`
+                            *,
+                            populations(name, zone, shipping_cost, assembly_cost)
+                        `)
+                        .eq('id', pedidoId)
+                        .single();
 
-        // SWITCH TAB
-        window.switchTab = function(tab) {
-            document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
-            document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
-            document.getElementById(tab).classList.add('active');
-            event.target.classList.add('active');
+                    if (error) throw error;
 
-            if (tab === 'historial') {
-                cargarHistorial();
+                    const total = (data.shipping_cost + data.assembly_cost).toFixed(2);
+
+                    let html = `
+                        <div style="font-size: 14px; line-height: 2;">
+                            <p><strong>Factura:</strong> ${data.invoice_number}</p>
+                            <p><strong>Estado:</strong> ${this.getStatusBadge(data.status)}</p>
+                            <p><strong>Cliente:</strong> ${data.customer_name}</p>
+                            <p><strong>Email:</strong> ${data.customer_email || '-'}</p>
+                            <p><strong>Teléfono:</strong> ${data.customer_phone || '-'}</p>
+                            <p><strong>Dirección:</strong> ${data.address}</p>
+                            <p><strong>Población:</strong> ${data.populations?.name}</p>
+                            <p><strong>Porte:</strong> ${data.shipping_cost.toFixed(2)}€</p>
+                            <p><strong>Montaje:</strong> ${data.assembly_cost.toFixed(2)}€</p>
+                            <p><strong style="font-size: 16px;">TOTAL: ${total}€</strong></p>
+                        </div>
+                    `;
+
+                    document.getElementById('modal-body').innerHTML = html;
+                    document.getElementById('modal-pedido').classList.add('active');
+                } catch (err) {
+                    console.error(err);
+                    alert('Error al cargar detalles');
+                }
+            },
+
+            // GET STATUS BADGE
+            getStatusBadge: function(status) {
+                const badges = {
+                    'registrado': '<span class="badge badge-primary">📝 Registrado</span>',
+                    'confirmado': '<span class="badge badge-warning">⏰ Confirmado</span>',
+                    'en_reparto': '<span class="badge badge-warning">🚗 En Reparto</span>',
+                    'entregado': '<span class="badge badge-success">✅ Entregado</span>',
+                    'no_disponible': '<span class="badge badge-danger">❌ No Disponible</span>'
+                };
+                return badges[status] || status;
+            },
+
+            // FILTRAR PEDIDOS
+            filtrarPedidos: function() {
+                const filtro = document.getElementById('filtro-cliente').value.toLowerCase();
+                const estado = document.getElementById('filtro-estado').value;
+
+                let filtrados = this.pedidosData.filter(p => 
+                    (p.customer_name.toLowerCase().includes(filtro) || 
+                    p.invoice_number.toLowerCase().includes(filtro)) &&
+                    (!estado || p.status === estado)
+                );
+
+                this.mostrarPedidos(filtrados);
+            },
+
+            // SWITCH TAB
+            switchTab: function(tab) {
+                document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
+                document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+                document.getElementById(tab).classList.add('active');
+                event.target.classList.add('active');
+            },
+
+            // CERRAR MODAL
+            cerrarModal: function() {
+                document.getElementById('modal-pedido').classList.remove('active');
+            },
+
+            // MOSTRAR MENSAJE
+            mostrarMensaje: function(tab, mensaje, tipo) {
+                const div = document.getElementById(`mensaje-${tab}`);
+                const clase = tipo === 'error' ? 'alert-error' : 'alert-success';
+                div.innerHTML = `<div class="alert ${clase}">${mensaje}</div>`;
+                setTimeout(() => { div.innerHTML = ''; }, 5000);
             }
-        }
+        };
 
-        // CERRAR MODALES
-        window.cerrarModal = function() {
-            document.getElementById('modal-pedido').classList.remove('active');
-        }
-
-        window.cerrarModalFoto = function() {
-            document.getElementById('modal-foto').classList.remove('active');
-            document.getElementById('delivery-person-name').value = '';
-            document.getElementById('preview-image').classList.add('hidden');
-            currentFile = null;
-        }
-
-        window.cerrarModalPDF = function() {
-            document.getElementById('modal-pdf').classList.remove('active');
-        }
-
-        // GET STATUS BADGE
-        function getStatusBadge(status) {
-            const badges = {
-                'registrado': '<span class="badge badge-primary">📝 Registrado</span>',
-                'confirmado': '<span class="badge badge-warning">⏰ Confirmado</span>',
-                'en_reparto': '<span class="badge badge-warning">🚗 En Reparto</span>',
-                'entregado': '<span class="badge badge-success">✅ Entregado</span>',
-                'no_disponible': '<span class="badge badge-danger">❌ No Disponible</span>',
-                'cancelado': '<span class="badge badge-danger">🚫 Cancelado</span>'
-            };
-            return badges[status] || status;
-        }
-
-        // MOSTRAR MENSAJE
-        function mostrarMensaje(tab, mensaje, tipo) {
-            const div = document.getElementById(`mensaje-${tab}`);
-            const clase = tipo === 'error' ? 'alert-error' : 'alert-success';
-            div.innerHTML = `<div class="alert ${clase}">${mensaje}</div>`;
-            setTimeout(() => { div.innerHTML = ''; }, 5000);
-        }
-
-        // FOCUS EN EL INPUT DE LOGIN
-        document.getElementById('employee-id').focus();
+        // FOCUS EN LOGIN
         document.getElementById('employee-id').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') login();
+            if (e.key === 'Enter') app.login();
         });
+        document.getElementById('employee-id').focus();
     </script>
 </body>
 </html>
