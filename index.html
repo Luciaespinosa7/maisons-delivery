@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Maisons du Monde - Gestión de Entregas</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.38.0"></script>
     <style>
         * {
             margin: 0;
@@ -198,10 +197,6 @@
             margin-bottom: 15px;
         }
 
-        .form-group {
-            margin-bottom: 15px;
-        }
-
         label {
             display: block;
             margin-bottom: 5px;
@@ -213,7 +208,6 @@
         input[type="text"],
         input[type="email"],
         input[type="tel"],
-        input[type="date"],
         select,
         textarea {
             width: 100%;
@@ -228,7 +222,6 @@
         input[type="text"]:focus,
         input[type="email"]:focus,
         input[type="tel"]:focus,
-        input[type="date"]:focus,
         select:focus,
         textarea:focus {
             outline: none;
@@ -448,12 +441,6 @@
             gap: 15px;
         }
 
-        .loading {
-            text-align: center;
-            padding: 20px;
-            color: #667eea;
-        }
-
         @media (max-width: 768px) {
             .grid {
                 grid-template-columns: 1fr;
@@ -637,12 +624,6 @@
     </div>
 
     <script>
-        // Inicializar Supabase
-        const { createClient } = window.supabase;
-        const SUPABASE_URL = 'https://hxjlxvfsbtoaz8haulk.supabase.co';
-        const SUPABASE_KEY = 'sb_publishable_0G8WcTMGjN0QAMdRXqpvLA_pWEYt9c6';
-        const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
-
         // TABLA DE EMPLEADOS (LOCAL)
         const EMPLEADOS = {
             '5739': 'Eloy',
@@ -672,7 +653,6 @@
                     return;
                 }
 
-                // Login exitoso
                 this.currentUser = {
                     id: employeeId,
                     name: EMPLEADOS[employeeId]
@@ -691,7 +671,6 @@
                 document.getElementById('app-screen').style.display = 'none';
                 document.getElementById('login-screen').style.display = 'flex';
                 document.getElementById('employee-id').value = '';
-                document.getElementById('login-error').style.display = 'none';
             },
 
             mostrarLoginError: function(msg) {
@@ -707,21 +686,18 @@
                 await this.cargarPedidos();
             },
 
-            // CARGAR POBLACIONES
+            // CARGAR POBLACIONES (DESDE API VERCEL)
             cargarPoblaciones: async function() {
                 try {
                     console.log('Cargando poblaciones...');
-                    const { data, error } = await supabase
-                        .from('populations')
-                        .select('id, name, zone, shipping_cost, assembly_cost')
-                        .order('name');
-
-                    if (error) {
-                        console.error('Error Supabase:', error);
-                        throw error;
+                    const response = await fetch('/api/populations');
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
                     }
 
-                    console.log('Poblaciones cargadas:', data ? data.length : 0);
+                    const data = await response.json();
+                    console.log('Poblaciones cargadas:', data.length);
 
                     this.poblacionesData = data || [];
                     const select = document.getElementById('population');
@@ -795,31 +771,32 @@
                     const shippingCost = parseFloat(poblacion.shipping_cost);
                     const assemblyCost = needsAssembly ? parseFloat(poblacion.assembly_cost) : 0;
 
-                    const { data, error } = await supabase
-                        .from('orders')
-                        .insert([
-                            {
-                                invoice_number: invoice,
-                                created_by_employee_id: this.currentUser.id,
-                                customer_name: customerName,
-                                customer_email: customerEmail || null,
-                                customer_phone: customerPhone || null,
-                                address: address,
-                                population_id: populationId,
-                                shipping_cost: shippingCost,
-                                assembly_cost: assemblyCost,
-                                needs_assembly: needsAssembly,
-                                assembly_time: assemblyTime,
-                                has_elevator: hasElevator,
-                                observations: observations || null,
-                                status: 'registrado'
-                            }
-                        ])
-                        .select();
+                    const response = await fetch('/api/orders', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            invoice_number: invoice,
+                            created_by_employee_id: this.currentUser.id,
+                            customer_name: customerName,
+                            customer_email: customerEmail || null,
+                            customer_phone: customerPhone || null,
+                            address: address,
+                            population_id: populationId,
+                            shipping_cost: shippingCost,
+                            assembly_cost: assemblyCost,
+                            needs_assembly: needsAssembly,
+                            assembly_time: assemblyTime,
+                            has_elevator: hasElevator,
+                            observations: observations || null,
+                            status: 'registrado'
+                        })
+                    });
 
-                    if (error) throw error;
+                    if (!response.ok) throw new Error('Error creando pedido');
 
-                    this.mostrarMensaje('crear', `✅ Pedido creado: ${data[0].invoice_number}`, 'success');
+                    this.mostrarMensaje('crear', `✅ Pedido creado: ${invoice}`, 'success');
                     this.limpiarFormularioPedido();
                     await this.cargarPedidos();
                 } catch (err) {
@@ -843,26 +820,14 @@
                 this.actualizarCostes();
             },
 
-            // CARGAR PEDIDOS
+            // CARGAR PEDIDOS (DESDE API VERCEL)
             cargarPedidos: async function() {
                 try {
-                    const { data, error } = await supabase
-                        .from('orders')
-                        .select(`
-                            id,
-                            invoice_number,
-                            customer_name,
-                            status,
-                            shipping_cost,
-                            assembly_cost,
-                            created_at,
-                            population_id,
-                            populations(name, zone)
-                        `)
-                        .order('created_at', { ascending: false });
+                    const response = await fetch('/api/orders');
+                    
+                    if (!response.ok) throw new Error('Error cargando pedidos');
 
-                    if (error) throw error;
-                    this.pedidosData = data || [];
+                    this.pedidosData = await response.json();
                     this.mostrarPedidos(this.pedidosData);
                 } catch (err) {
                     console.error(err);
@@ -918,42 +883,29 @@
             },
 
             // VER DETALLES
-            verDetalles: async function(pedidoId) {
-                try {
-                    const { data, error } = await supabase
-                        .from('orders')
-                        .select(`
-                            *,
-                            populations(name, zone, shipping_cost, assembly_cost)
-                        `)
-                        .eq('id', pedidoId)
-                        .single();
+            verDetalles: function(pedidoId) {
+                const pedido = this.pedidosData.find(p => p.id === pedidoId);
+                if (!pedido) return;
 
-                    if (error) throw error;
+                const total = (pedido.shipping_cost + pedido.assembly_cost).toFixed(2);
 
-                    const total = (data.shipping_cost + data.assembly_cost).toFixed(2);
+                let html = `
+                    <div style="font-size: 14px; line-height: 2;">
+                        <p><strong>Factura:</strong> ${pedido.invoice_number}</p>
+                        <p><strong>Estado:</strong> ${this.getStatusBadge(pedido.status)}</p>
+                        <p><strong>Cliente:</strong> ${pedido.customer_name}</p>
+                        <p><strong>Email:</strong> ${pedido.customer_email || '-'}</p>
+                        <p><strong>Teléfono:</strong> ${pedido.customer_phone || '-'}</p>
+                        <p><strong>Dirección:</strong> ${pedido.address}</p>
+                        <p><strong>Población:</strong> ${pedido.populations?.name}</p>
+                        <p><strong>Porte:</strong> ${pedido.shipping_cost.toFixed(2)}€</p>
+                        <p><strong>Montaje:</strong> ${pedido.assembly_cost.toFixed(2)}€</p>
+                        <p><strong style="font-size: 16px;">TOTAL: ${total}€</strong></p>
+                    </div>
+                `;
 
-                    let html = `
-                        <div style="font-size: 14px; line-height: 2;">
-                            <p><strong>Factura:</strong> ${data.invoice_number}</p>
-                            <p><strong>Estado:</strong> ${this.getStatusBadge(data.status)}</p>
-                            <p><strong>Cliente:</strong> ${data.customer_name}</p>
-                            <p><strong>Email:</strong> ${data.customer_email || '-'}</p>
-                            <p><strong>Teléfono:</strong> ${data.customer_phone || '-'}</p>
-                            <p><strong>Dirección:</strong> ${data.address}</p>
-                            <p><strong>Población:</strong> ${data.populations?.name}</p>
-                            <p><strong>Porte:</strong> ${data.shipping_cost.toFixed(2)}€</p>
-                            <p><strong>Montaje:</strong> ${data.assembly_cost.toFixed(2)}€</p>
-                            <p><strong style="font-size: 16px;">TOTAL: ${total}€</strong></p>
-                        </div>
-                    `;
-
-                    document.getElementById('modal-body').innerHTML = html;
-                    document.getElementById('modal-pedido').classList.add('active');
-                } catch (err) {
-                    console.error(err);
-                    alert('Error al cargar detalles');
-                }
+                document.getElementById('modal-body').innerHTML = html;
+                document.getElementById('modal-pedido').classList.add('active');
             },
 
             // GET STATUS BADGE
