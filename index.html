@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maisons du Monde - Gestión de Entregas</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.38.0/+esm"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid #eee;
+            background: #f8f9fa;
+        }
+
+        .tab-button {
+            flex: 1;
+            padding: 15px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            color: #666;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .tab-button.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+            background: white;
+        }
+
+        .tab-button:hover {
+            background: white;
+        }
+
+        .content {
+            display: none;
+            padding: 30px;
+            animation: fadeIn 0.3s;
+        }
+
+        .content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .form-section {
+            margin-bottom: 25px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .form-section h3 {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        input[type="date"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="tel"]:focus,
+        input[type="date"]:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+
+        input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .checkbox-group label {
+            margin: 0;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .cost-summary {
+            background: linear-gradient(135deg, #ffd89b 0%, #19547b 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .cost-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .cost-total {
+            border-top: 2px solid rgba(255, 255, 255, 0.5);
+            padding-top: 10px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            width: 100%;
+            padding: 15px;
+            font-size: 18px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+            margin-right: 10px;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        table thead {
+            background: #f8f9fa;
+            border-bottom: 2px solid #ddd;
+        }
+
+        table th {
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #333;
+        }
+
+        table td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+
+        table tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-primary {
+            background: #e7f3ff;
+            color: #0066cc;
+        }
+
+        .badge-warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .badge-success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge-danger {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #667eea;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            .tabs {
+                flex-wrap: wrap;
+            }
+            .tab-button {
+                flex: 1 1 50%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📦 Maisons du Monde</h1>
+            <p>Sistema de Gestión de Entregas</p>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-button active" onclick="switchTab('crear')">➕ Crear Pedido</button>
+            <button class="tab-button" onclick="switchTab('listar')">📋 Ver Pedidos</button>
+        </div>
+
+        <!-- TAB 1: CREAR PEDIDO -->
+        <div id="crear" class="content active">
+            <div id="mensaje-crear"></div>
+
+            <!-- SECCIÓN 1: FACTURA -->
+            <div class="form-section">
+                <h3>📄 Factura</h3>
+                <div class="form-group">
+                    <label for="invoice">Número de Factura *</label>
+                    <input type="text" id="invoice" placeholder="Ej: FAC2024001" required>
+                    <small>💡 Puedes usar lector de códigos de barras</small>
+                </div>
+            </div>
+
+            <!-- SECCIÓN 2: CLIENTE -->
+            <div class="form-section">
+                <h3>👤 Datos del Cliente</h3>
+                <div class="grid">
+                    <div class="form-group">
+                        <label for="customer-name">Nombre Completo *</label>
+                        <input type="text" id="customer-name" placeholder="Ej: Juan García" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="customer-email">Email</label>
+                        <input type="email" id="customer-email" placeholder="Ej: juan@email.com">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="customer-phone">Teléfono</label>
+                    <input type="tel" id="customer-phone" placeholder="Ej: +376 123456">
+                </div>
+            </div>
+
+            <!-- SECCIÓN 3: DOMICILIO -->
+            <div class="form-section">
+                <h3>🏠 Domicilio</h3>
+                <div class="form-group">
+                    <label for="address">Calle y Número *</label>
+                    <input type="text" id="address" placeholder="Ej: Carrer de la Pau, 5" required>
+                </div>
+                <div class="grid">
+                    <div class="form-group">
+                        <label for="population">Población *</label>
+                        <select id="population" required>
+                            <option value="">Selecciona población...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Código Postal</label>
+                        <input type="text" id="postal-code" disabled style="background: #f0f0f0;">
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECCIÓN 4: LOGÍSTICA -->
+            <div class="form-section">
+                <h3>📦 Logística</h3>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="needs-assembly" onchange="toggleAssembly()">
+                    <label for="needs-assembly">¿Necesita montaje/ensamblaje?</label>
+                </div>
+
+                <div id="assembly-time-group" class="hidden form-group">
+                    <label for="assembly-time">Tiempo de montaje</label>
+                    <select id="assembly-time">
+                        <option value="15">15 minutos</option>
+                        <option value="30">30 minutos</option>
+                        <option value="45">45 minutos</option>
+                        <option value="60">60 minutos</option>
+                        <option value="75">75 minutos</option>
+                        <option value="90">90 minutos</option>
+                    </select>
+                </div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="has-elevator">
+                    <label for="has-elevator">¿Vivienda con ascensor?</label>
+                </div>
+
+                <div class="form-group">
+                    <label for="observations">Observaciones</label>
+                    <textarea id="observations" placeholder="Ej: 4ª planta, no tocar timbre, dejar en porche..."></textarea>
+                </div>
+            </div>
+
+            <!-- RESUMEN DE COSTES -->
+            <div class="cost-summary">
+                <div class="cost-row">
+                    <span>Porte de envío:</span>
+                    <span id="cost-shipping">0.00€</span>
+                </div>
+                <div class="cost-row" id="cost-assembly-row" style="display: none;">
+                    <span>Montaje/ensamblaje:</span>
+                    <span id="cost-assembly">0.00€</span>
+                </div>
+                <div class="cost-row cost-total">
+                    <span>TOTAL:</span>
+                    <span id="cost-total">0.00€</span>
+                </div>
+            </div>
+
+            <button class="btn-primary" onclick="crearPedido()">✅ CREAR PEDIDO</button>
+        </div>
+
+        <!-- TAB 2: LISTAR PEDIDOS -->
+        <div id="listar" class="content">
+            <h3 style="margin-bottom: 20px;">📋 Pedidos Registrados</h3>
+            
+            <div class="form-group" style="margin-bottom: 20px;">
+                <input type="text" id="filtro-cliente" placeholder="🔍 Buscar por cliente o factura..." onkeyup="filtrarPedidos()">
+            </div>
+
+            <div id="loading-table" class="loading hidden">
+                <div class="spinner"></div>
+                Cargando pedidos...
+            </div>
+
+            <div class="table-responsive" id="tabla-pedidos"></div>
+        </div>
+    </div>
+
+    <!-- MODAL: DETALLES DE PEDIDO -->
+    <div id="modal-pedido" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">Detalles del Pedido</div>
+            <div id="modal-body"></div>
+            <button class="btn-secondary" onclick="cerrarModal()" style="width: 100%; margin-top: 20px;">Cerrar</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.38.0/+esm';
+
+        // ⚠️ REEMPLAZA ESTOS VALORES CON LOS TUYOS
+        const SUPABASE_URL = 'https://YOUR-PROJECT.supabase.co';
+        const SUPABASE_KEY = 'YOUR-ANON-KEY';
+
+        const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        let poblacionesData = [];
+        let pedidosData = [];
+
+        // INICIALIZAR
+        async function init() {
+            await cargarPoblaciones();
+            await cargarPedidos();
+        }
+
+        // CARGAR POBLACIONES
+        async function cargarPoblaciones() {
+            const { data, error } = await supabase
+                .from('populations')
+                .select('*')
+                .order('name');
+
+            if (error) {
+                console.error('Error cargando poblaciones:', error);
+                return;
+            }
+
+            poblacionesData = data;
+            const select = document.getElementById('population');
+            
+            select.innerHTML = '<option value="">Selecciona población...</option>';
+            poblacionesData.forEach(p => {
+                const option = document.createElement('option');
+                option.value = p.id;
+                option.textContent = `${p.name} (${p.zone})`;
+                select.appendChild(option);
+            });
+
+            // Evento para actualizar código postal y costes
+            select.addEventListener('change', actualizarCostes);
+        }
+
+        // ACTUALIZAR COSTES
+        function actualizarCostes() {
+            const poblacionId = document.getElementById('population').value;
+            const poblacion = poblacionesData.find(p => p.id === poblacionId);
+
+            if (poblacion) {
+                document.getElementById('postal-code').value = poblacion.name;
+                
+                const shipping = parseFloat(poblacion.shipping_cost);
+                let assembly = 0;
+
+                if (document.getElementById('needs-assembly').checked) {
+                    assembly = parseFloat(poblacion.assembly_cost);
+                    document.getElementById('cost-assembly-row').style.display = 'flex';
+                    document.getElementById('cost-assembly').textContent = assembly.toFixed(2) + '€';
+                } else {
+                    document.getElementById('cost-assembly-row').style.display = 'none';
+                }
+
+                document.getElementById('cost-shipping').textContent = shipping.toFixed(2) + '€';
+                document.getElementById('cost-total').textContent = (shipping + assembly).toFixed(2) + '€';
+            }
+        }
+
+        // TOGGLE MONTAJE
+        window.toggleAssembly = function() {
+            const checked = document.getElementById('needs-assembly').checked;
+            document.getElementById('assembly-time-group').classList.toggle('hidden', !checked);
+            actualizarCostes();
+        }
+
+        // CREAR PEDIDO
+        window.crearPedido = async function() {
+            const invoice = document.getElementById('invoice').value.trim();
+            const customerName = document.getElementById('customer-name').value.trim();
+            const customerEmail = document.getElementById('customer-email').value.trim();
+            const customerPhone = document.getElementById('customer-phone').value.trim();
+            const address = document.getElementById('address').value.trim();
+            const populationId = document.getElementById('population').value;
+            const needsAssembly = document.getElementById('needs-assembly').checked;
+            const assemblyTime = needsAssembly ? parseInt(document.getElementById('assembly-time').value) : null;
+            const hasElevator = document.getElementById('has-elevator').checked;
+            const observations = document.getElementById('observations').value.trim();
+
+            // VALIDACIONES
+            if (!invoice) return mostrarMensaje('crear', 'Número de factura obligatorio', 'error');
+            if (!customerName) return mostrarMensaje('crear', 'Nombre del cliente obligatorio', 'error');
+            if (!address) return mostrarMensaje('crear', 'Dirección obligatoria', 'error');
+            if (!populationId) return mostrarMensaje('crear', 'Población obligatoria', 'error');
+
+            const poblacion = poblacionesData.find(p => p.id === populationId);
+            const shippingCost = parseFloat(poblacion.shipping_cost);
+            const assemblyCost = needsAssembly ? parseFloat(poblacion.assembly_cost) : 0;
+
+            const { data, error } = await supabase
+                .from('orders')
+                .insert([
+                    {
+                        invoice_number: invoice.toUpperCase(),
+                        created_by: '00000000-0000-0000-0000-000000000000', // TODO: cambiar con auth real
+                        customer_name: customerName,
+                        customer_email: customerEmail || null,
+                        customer_phone: customerPhone || null,
+                        address: address,
+                        population_id: populationId,
+                        shipping_cost: shippingCost,
+                        assembly_cost: assemblyCost,
+                        needs_assembly: needsAssembly,
+                        assembly_time: assemblyTime,
+                        has_elevator: hasElevator,
+                        observations: observations || null,
+                        status: 'registrado'
+                    }
+                ])
+                .select();
+
+            if (error) {
+                console.error(error);
+                return mostrarMensaje('crear', `Error: ${error.message}`, 'error');
+            }
+
+            mostrarMensaje('crear', `✅ Pedido creado: ${data[0].invoice_number} | Total: ${(shippingCost + assemblyCost).toFixed(2)}€`, 'success');
+            
+            // LIMPIAR FORMULARIO
+            document.getElementById('invoice').value = '';
+            document.getElementById('customer-name').value = '';
+            document.getElementById('customer-email').value = '';
+            document.getElementById('customer-phone').value = '';
+            document.getElementById('address').value = '';
+            document.getElementById('population').value = '';
+            document.getElementById('postal-code').value = '';
+            document.getElementById('needs-assembly').checked = false;
+            document.getElementById('assembly-time-group').classList.add('hidden');
+            document.getElementById('has-elevator').checked = false;
+            document.getElementById('observations').value = '';
+            actualizarCostes();
+
+            // RECARGAR TABLA
+            await cargarPedidos();
+        }
+
+        // CARGAR PEDIDOS
+        async function cargarPedidos() {
+            document.getElementById('tabla-pedidos').innerHTML = '<div class="loading"><div class="spinner"></div>Cargando...</div>';
+
+            const { data, error } = await supabase
+                .from('orders')
+                .select(`
+                    id,
+                    invoice_number,
+                    customer_name,
+                    status,
+                    shipping_cost,
+                    assembly_cost,
+                    created_at,
+                    population_id,
+                    populations(name, zone)
+                `)
+                .order('created_at', { ascending: false });
+
+            if (error) {
+                console.error(error);
+                document.getElementById('tabla-pedidos').innerHTML = `<div class="alert alert-error">Error: ${error.message}</div>`;
+                return;
+            }
+
+            pedidosData = data || [];
+            mostrarPedidos(pedidosData);
+        }
+
+        // MOSTRAR PEDIDOS EN TABLA
+        function mostrarPedidos(pedidos) {
+            if (pedidos.length === 0) {
+                document.getElementById('tabla-pedidos').innerHTML = '<p style="text-align: center; padding: 40px; color: #999;">Sin pedidos registrados</p>';
+                return;
+            }
+
+            let html = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Factura</th>
+                            <th>Cliente</th>
+                            <th>Población</th>
+                            <th>Estado</th>
+                            <th>Total</th>
+                            <th>Fecha</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            pedidos.forEach(p => {
+                const total = (p.shipping_cost + p.assembly_cost).toFixed(2);
+                const fecha = new Date(p.created_at).toLocaleDateString('es-ES');
+                const badge = getStatusBadge(p.status);
+
+                html += `
+                    <tr>
+                        <td><strong>${p.invoice_number}</strong></td>
+                        <td>${p.customer_name}</td>
+                        <td>${p.populations?.zone || '-'}</td>
+                        <td>${badge}</td>
+                        <td>${total}€</td>
+                        <td>${fecha}</td>
+                        <td>
+                            <button class="btn-secondary" style="padding: 6px 12px; font-size: 12px;" onclick="verDetalles('${p.id}')">Ver</button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            html += `
+                    </tbody>
+                </table>
+            `;
+
+            document.getElementById('tabla-pedidos').innerHTML = html;
+        }
+
+        // GET STATUS BADGE
+        function getStatusBadge(status) {
+            const badges = {
+                'registrado': '<span class="badge badge-primary">📝 Registrado</span>',
+                'confirmado': '<span class="badge badge-warning">⏰ Confirmado</span>',
+                'en_reparto': '<span class="badge badge-warning">🚗 En Reparto</span>',
+                'entregado': '<span class="badge badge-success">✅ Entregado</span>',
+                'no_disponible': '<span class="badge badge-danger">❌ No Disponible</span>',
+                'cancelado': '<span class="badge badge-danger">🚫 Cancelado</span>'
+            };
+            return badges[status] || status;
+        }
+
+        // VER DETALLES
+        window.verDetalles = async function(pedidoId) {
+            const { data, error } = await supabase
+                .from('orders')
+                .select(`
+                    *,
+                    populations(name, zone, shipping_cost, assembly_cost)
+                `)
+                .eq('id', pedidoId)
+                .single();
+
+            if (error) {
+                console.error(error);
+                return;
+            }
+
+            const total = (data.shipping_cost + data.assembly_cost).toFixed(2);
+            const fecha = new Date(data.created_at).toLocaleDateString('es-ES');
+
+            let html = `
+                <div style="font-size: 14px; line-height: 1.8;">
+                    <p><strong>Factura:</strong> ${data.invoice_number}</p>
+                    <p><strong>Estado:</strong> ${getStatusBadge(data.status)}</p>
+                    <p><strong>Fecha creación:</strong> ${fecha}</p>
+                    <hr style="margin: 10px 0;">
+                    <p><strong>Cliente:</strong> ${data.customer_name}</p>
+                    <p><strong>Email:</strong> ${data.customer_email || '-'}</p>
+                    <p><strong>Teléfono:</strong> ${data.customer_phone || '-'}</p>
+                    <hr style="margin: 10px 0;">
+                    <p><strong>Dirección:</strong> ${data.address}</p>
+                    <p><strong>Población:</strong> ${data.populations?.name}</p>
+                    <hr style="margin: 10px 0;">
+                    <p><strong>Porte:</strong> ${data.shipping_cost.toFixed(2)}€</p>
+                    <p><strong>Montaje:</strong> ${data.assembly_cost.toFixed(2)}€</p>
+                    <p><strong style="font-size: 16px;">TOTAL: ${total}€</strong></p>
+                    ${data.observations ? `<hr style="margin: 10px 0;"><p><strong>Observaciones:</strong> ${data.observations}</p>` : ''}
+                </div>
+            `;
+
+            document.getElementById('modal-body').innerHTML = html;
+            document.getElementById('modal-pedido').classList.add('active');
+        }
+
+        // FILTRAR PEDIDOS
+        window.filtrarPedidos = function() {
+            const filtro = document.getElementById('filtro-cliente').value.toLowerCase();
+            const filtrados = pedidosData.filter(p => 
+                p.customer_name.toLowerCase().includes(filtro) || 
+                p.invoice_number.toLowerCase().includes(filtro)
+            );
+            mostrarPedidos(filtrados);
+        }
+
+        // CERRAR MODAL
+        window.cerrarModal = function() {
+            document.getElementById('modal-pedido').classList.remove('active');
+        }
+
+        // SWITCH TAB
+        window.switchTab = function(tab) {
+            document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+            document.getElementById(tab).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // MOSTRAR MENSAJE
+        function mostrarMensaje(tab, mensaje, tipo) {
+            const div = document.getElementById(`mensaje-${tab}`);
+            const clase = tipo === 'error' ? 'alert-error' : 'alert-success';
+            div.innerHTML = `<div class="alert ${clase}">${mensaje}</div>`;
+            setTimeout(() => { div.innerHTML = ''; }, 5000);
+        }
+
+        // INICIAR
+        init();
+    </script>
+</body>
+</html>
