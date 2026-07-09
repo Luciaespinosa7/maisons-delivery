@@ -197,14 +197,6 @@
             margin-bottom: 15px;
         }
 
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 600;
-            color: #333;
-            font-size: 14px;
-        }
-
         input[type="text"],
         input[type="email"],
         input[type="tel"],
@@ -538,8 +530,8 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>Código Postal</label>
-                        <input type="text" id="postal-code" disabled style="background: #f0f0f0;">
+                        <label>Zona</label>
+                        <input type="text" id="zone" disabled style="background: #f0f0f0;">
                     </div>
                 </div>
             </div>
@@ -633,10 +625,21 @@
             '5663': 'Lucía - Administradora'
         };
 
+        // POBLACIONES HARDCODEADAS
+        const POBLACIONES = [
+            { id: 1, name: 'Andorra la Vella', zone: 'Z1', shipping_cost: 10, assembly_cost: 15 },
+            { id: 2, name: 'Escaldes-Engordany', zone: 'Z1', shipping_cost: 10, assembly_cost: 15 },
+            { id: 3, name: 'La Massana', zone: 'Z2', shipping_cost: 15, assembly_cost: 25 },
+            { id: 4, name: 'Ordino', zone: 'Z2', shipping_cost: 15, assembly_cost: 25 },
+            { id: 5, name: 'Canillo', zone: 'Z2', shipping_cost: 15, assembly_cost: 25 },
+            { id: 6, name: 'Sant Julià de Lòria', zone: 'Z3', shipping_cost: 20, assembly_cost: 35 },
+            { id: 7, name: 'Encamp', zone: 'Z3', shipping_cost: 20, assembly_cost: 35 },
+            { id: 8, name: 'Arinsal', zone: 'Z4', shipping_cost: 40, assembly_cost: 70 }
+        ];
+
         // Objeto global de la app
         const app = {
             currentUser: null,
-            poblacionesData: [],
             pedidosData: [],
 
             // LOGIN
@@ -681,55 +684,39 @@
             },
 
             // INICIALIZAR
-            init: async function() {
-                await this.cargarPoblaciones();
-                await this.cargarPedidos();
+            init: function() {
+                this.cargarPoblaciones();
+                this.cargarPedidos();
             },
 
-            // CARGAR POBLACIONES (DESDE API VERCEL)
-            cargarPoblaciones: async function() {
-                try {
-                    console.log('Cargando poblaciones...');
-                    const response = await fetch('/api/populations');
-                    
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
+            // CARGAR POBLACIONES
+            cargarPoblaciones: function() {
+                const select = document.getElementById('population');
+                select.innerHTML = '<option value="">Selecciona población...</option>';
+                
+                POBLACIONES.forEach(p => {
+                    const option = document.createElement('option');
+                    option.value = p.id;
+                    option.textContent = `${p.name} (${p.zone})`;
+                    select.appendChild(option);
+                });
 
-                    const data = await response.json();
-                    console.log('Poblaciones cargadas:', data.length);
-
-                    this.poblacionesData = data || [];
-                    const select = document.getElementById('population');
-                    select.innerHTML = '<option value="">Selecciona población...</option>';
-                    
-                    this.poblacionesData.forEach(p => {
-                        const option = document.createElement('option');
-                        option.value = p.id;
-                        option.textContent = `${p.name} (${p.zone})`;
-                        select.appendChild(option);
-                    });
-
-                    select.addEventListener('change', () => this.actualizarCostes());
-                } catch (err) {
-                    console.error('Error cargando poblaciones:', err);
-                    this.mostrarMensaje('crear', `⚠️ Error cargando pueblos: ${err.message}`, 'error');
-                }
+                select.addEventListener('change', () => this.actualizarCostes());
             },
 
             // ACTUALIZAR COSTES
             actualizarCostes: function() {
-                const poblacionId = document.getElementById('population').value;
-                const poblacion = this.poblacionesData.find(p => p.id === poblacionId);
+                const poblacionId = parseInt(document.getElementById('population').value);
+                const poblacion = POBLACIONES.find(p => p.id === poblacionId);
 
                 if (poblacion) {
-                    document.getElementById('postal-code').value = poblacion.name;
+                    document.getElementById('zone').value = poblacion.zone;
                     
-                    const shipping = parseFloat(poblacion.shipping_cost);
+                    const shipping = poblacion.shipping_cost;
                     let assembly = 0;
 
                     if (document.getElementById('needs-assembly').checked) {
-                        assembly = parseFloat(poblacion.assembly_cost);
+                        assembly = poblacion.assembly_cost;
                         document.getElementById('cost-assembly-row').style.display = 'flex';
                         document.getElementById('cost-assembly').textContent = assembly.toFixed(2) + '€';
                     } else {
@@ -749,13 +736,13 @@
             },
 
             // CREAR PEDIDO
-            crearPedido: async function() {
+            crearPedido: function() {
                 const invoice = document.getElementById('invoice').value.trim().toUpperCase();
                 const customerName = document.getElementById('customer-name').value.trim();
                 const customerEmail = document.getElementById('customer-email').value.trim();
                 const customerPhone = document.getElementById('customer-phone').value.trim();
                 const address = document.getElementById('address').value.trim();
-                const populationId = document.getElementById('population').value;
+                const populationId = parseInt(document.getElementById('population').value);
                 const needsAssembly = document.getElementById('needs-assembly').checked;
                 const assemblyTime = needsAssembly ? parseInt(document.getElementById('assembly-time').value) : null;
                 const hasElevator = document.getElementById('has-elevator').checked;
@@ -766,43 +753,36 @@
                 if (!address) return this.mostrarMensaje('crear', 'Dirección obligatoria', 'error');
                 if (!populationId) return this.mostrarMensaje('crear', 'Población obligatoria', 'error');
 
-                try {
-                    const poblacion = this.poblacionesData.find(p => p.id === populationId);
-                    const shippingCost = parseFloat(poblacion.shipping_cost);
-                    const assemblyCost = needsAssembly ? parseFloat(poblacion.assembly_cost) : 0;
+                const poblacion = POBLACIONES.find(p => p.id === populationId);
+                const shippingCost = poblacion.shipping_cost;
+                const assemblyCost = needsAssembly ? poblacion.assembly_cost : 0;
 
-                    const response = await fetch('/api/orders', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            invoice_number: invoice,
-                            created_by_employee_id: this.currentUser.id,
-                            customer_name: customerName,
-                            customer_email: customerEmail || null,
-                            customer_phone: customerPhone || null,
-                            address: address,
-                            population_id: populationId,
-                            shipping_cost: shippingCost,
-                            assembly_cost: assemblyCost,
-                            needs_assembly: needsAssembly,
-                            assembly_time: assemblyTime,
-                            has_elevator: hasElevator,
-                            observations: observations || null,
-                            status: 'registrado'
-                        })
-                    });
+                const pedido = {
+                    id: Date.now().toString(),
+                    invoice_number: invoice,
+                    created_by_employee_id: this.currentUser.id,
+                    customer_name: customerName,
+                    customer_email: customerEmail || null,
+                    customer_phone: customerPhone || null,
+                    address: address,
+                    population_id: populationId,
+                    shipping_cost: shippingCost,
+                    assembly_cost: assemblyCost,
+                    needs_assembly: needsAssembly,
+                    assembly_time: assemblyTime,
+                    has_elevator: hasElevator,
+                    observations: observations || null,
+                    status: 'registrado',
+                    created_at: new Date().toISOString(),
+                    populations: poblacion
+                };
 
-                    if (!response.ok) throw new Error('Error creando pedido');
+                this.pedidosData.push(pedido);
+                this.guardarPedidos();
 
-                    this.mostrarMensaje('crear', `✅ Pedido creado: ${invoice}`, 'success');
-                    this.limpiarFormularioPedido();
-                    await this.cargarPedidos();
-                } catch (err) {
-                    console.error(err);
-                    this.mostrarMensaje('crear', `Error: ${err.message}`, 'error');
-                }
+                this.mostrarMensaje('crear', `✅ Pedido creado: ${invoice}`, 'success');
+                this.limpiarFormularioPedido();
+                this.cargarPedidos();
             },
 
             limpiarFormularioPedido: function() {
@@ -812,7 +792,7 @@
                 document.getElementById('customer-phone').value = '';
                 document.getElementById('address').value = '';
                 document.getElementById('population').value = '';
-                document.getElementById('postal-code').value = '';
+                document.getElementById('zone').value = '';
                 document.getElementById('needs-assembly').checked = false;
                 document.getElementById('assembly-time-group').classList.add('hidden');
                 document.getElementById('has-elevator').checked = false;
@@ -820,19 +800,16 @@
                 this.actualizarCostes();
             },
 
-            // CARGAR PEDIDOS (DESDE API VERCEL)
-            cargarPedidos: async function() {
-                try {
-                    const response = await fetch('/api/orders');
-                    
-                    if (!response.ok) throw new Error('Error cargando pedidos');
+            // CARGAR PEDIDOS DEL LOCALSTORAGE
+            cargarPedidos: function() {
+                const stored = localStorage.getItem('maisons_pedidos');
+                this.pedidosData = stored ? JSON.parse(stored) : [];
+                this.mostrarPedidos(this.pedidosData);
+            },
 
-                    this.pedidosData = await response.json();
-                    this.mostrarPedidos(this.pedidosData);
-                } catch (err) {
-                    console.error(err);
-                    document.getElementById('tabla-pedidos').innerHTML = `<div class="alert alert-error">Error: ${err.message}</div>`;
-                }
+            // GUARDAR PEDIDOS EN LOCALSTORAGE
+            guardarPedidos: function() {
+                localStorage.setItem('maisons_pedidos', JSON.stringify(this.pedidosData));
             },
 
             // MOSTRAR PEDIDOS
