@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Maisons du Monde - Gestión de Entregas</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -57,16 +58,17 @@
             color: #333;
         }
 
-        input {
+        input, select, textarea {
             width: 100%;
             padding: 12px;
             border: 2px solid #ddd;
             border-radius: 6px;
             font-size: 16px;
             transition: border-color 0.3s;
+            font-family: inherit;
         }
 
-        input:focus {
+        input:focus, select:focus, textarea:focus {
             outline: none;
             border-color: #667eea;
         }
@@ -197,29 +199,6 @@
             margin-bottom: 15px;
         }
 
-        input[type="text"],
-        input[type="email"],
-        input[type="tel"],
-        select,
-        textarea {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 6px;
-            font-size: 14px;
-            font-family: inherit;
-            transition: border-color 0.3s;
-        }
-
-        input[type="text"]:focus,
-        input[type="email"]:focus,
-        input[type="tel"]:focus,
-        select:focus,
-        textarea:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
         textarea {
             resize: vertical;
             min-height: 80px;
@@ -286,16 +265,26 @@
             box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
         }
 
-        .btn-primary:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            transform: none;
-        }
-
         .btn-secondary {
             background: #6c757d;
             color: white;
             margin-right: 10px;
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+
+        .btn-warning {
+            background: #ff9800;
+            color: white;
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+            padding: 8px 16px;
+            font-size: 14px;
         }
 
         .alert {
@@ -401,7 +390,7 @@
             border-radius: 12px;
             max-width: 600px;
             width: 90%;
-            max-height: 80vh;
+            max-height: 90vh;
             overflow-y: auto;
         }
 
@@ -431,6 +420,43 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 15px;
+        }
+
+        .search-population {
+            position: relative;
+        }
+
+        .search-population input {
+            width: 100%;
+        }
+
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 2px solid #ddd;
+            border-top: none;
+            max-height: 300px;
+            overflow-y: auto;
+            display: none;
+            z-index: 100;
+        }
+
+        .search-results.active {
+            display: block;
+        }
+
+        .search-result-item {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .search-result-item:hover {
+            background: #f8f9fa;
         }
 
         @media (max-width: 768px) {
@@ -523,11 +549,10 @@
                     <input type="text" id="address" placeholder="Ej: Carrer de la Pau, 5" required>
                 </div>
                 <div class="grid">
-                    <div class="form-group">
-                        <label for="population">Población *</label>
-                        <select id="population" required>
-                            <option value="">Selecciona población...</option>
-                        </select>
+                    <div class="form-group search-population">
+                        <label for="population-search">Población *</label>
+                        <input type="text" id="population-search" placeholder="Busca población..." required>
+                        <div class="search-results" id="search-results"></div>
                     </div>
                     <div class="form-group">
                         <label>Zona</label>
@@ -615,8 +640,19 @@
         </div>
     </div>
 
+    <!-- MODAL: EDITAR PEDIDO -->
+    <div id="modal-editar" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">Editar Pedido</div>
+            <div id="modal-editar-body"></div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="app.cerrarModalEditar()">Cancelar</button>
+                <button class="btn-primary" onclick="app.guardarPedidoEditado()">Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // TABLA DE EMPLEADOS (LOCAL)
         const EMPLEADOS = {
             '5739': 'Eloy',
             '1974': 'María del Mar',
@@ -625,47 +661,84 @@
             '5663': 'Lucía - Administradora'
         };
 
-        // POBLACIONES HARDCODEADAS
         const POBLACIONES = [
-            { id: 1, name: 'Andorra la Vella', zone: 'Z1', shipping_cost: 10, assembly_cost: 15 },
-            { id: 2, name: 'Escaldes-Engordany', zone: 'Z1', shipping_cost: 10, assembly_cost: 15 },
-            { id: 3, name: 'La Massana', zone: 'Z2', shipping_cost: 15, assembly_cost: 25 },
-            { id: 4, name: 'Ordino', zone: 'Z2', shipping_cost: 15, assembly_cost: 25 },
-            { id: 5, name: 'Canillo', zone: 'Z2', shipping_cost: 15, assembly_cost: 25 },
-            { id: 6, name: 'Sant Julià de Lòria', zone: 'Z3', shipping_cost: 20, assembly_cost: 35 },
-            { id: 7, name: 'Encamp', zone: 'Z3', shipping_cost: 20, assembly_cost: 35 },
-            { id: 8, name: 'Arinsal', zone: 'Z4', shipping_cost: 40, assembly_cost: 70 }
+            { id: 1, name: 'Escaldes - Escaldes', zone: 'Z1', shipping_cost: 10, assembly_cost: 15 },
+            { id: 2, name: 'Escaldes - Engordany', zone: 'Z1', shipping_cost: 10, assembly_cost: 15 },
+            { id: 3, name: 'Escaldes - Els Vilars', zone: 'Z1', shipping_cost: 10, assembly_cost: 15 },
+            { id: 4, name: 'Andorra la Vella - Andorra la Vella', zone: 'Z1', shipping_cost: 10, assembly_cost: 15 },
+            { id: 5, name: 'Andorra la Vella - Santa Coloma', zone: 'Z1', shipping_cost: 10, assembly_cost: 15 },
+            { id: 6, name: 'Andorra la Vella - La Margineda', zone: 'Z1', shipping_cost: 10, assembly_cost: 15 },
+            { id: 7, name: 'Escaldes - Engolasters', zone: 'Z2', shipping_cost: 15, assembly_cost: 25 },
+            { id: 8, name: 'Encamp - Encamp', zone: 'Z2', shipping_cost: 15, assembly_cost: 25 },
+            { id: 9, name: 'Encamp - Vila', zone: 'Z2', shipping_cost: 15, assembly_cost: 25 },
+            { id: 10, name: 'Encamp - Les Bons', zone: 'Z2', shipping_cost: 15, assembly_cost: 25 },
+            { id: 11, name: 'Encamp - La Mosquera', zone: 'Z2', shipping_cost: 15, assembly_cost: 25 },
+            { id: 12, name: 'Sant Julià de Lòria - Sant Julià de Lòria (nucli)', zone: 'Z2', shipping_cost: 15, assembly_cost: 25 },
+            { id: 13, name: 'La Massana - La Massana', zone: 'Z2', shipping_cost: 15, assembly_cost: 25 },
+            { id: 14, name: 'La Massana - Anyós', zone: 'Z2', shipping_cost: 15, assembly_cost: 25 },
+            { id: 15, name: 'La Massana - Sispony', zone: 'Z2', shipping_cost: 15, assembly_cost: 25 },
+            { id: 16, name: 'La Massana - L\'Aldosa', zone: 'Z2', shipping_cost: 15, assembly_cost: 25 },
+            { id: 17, name: 'La Massana - Escàs', zone: 'Z2', shipping_cost: 15, assembly_cost: 25 },
+            { id: 18, name: 'Ordino - Ordino', zone: 'Z2', shipping_cost: 15, assembly_cost: 25 },
+            { id: 19, name: 'Ordino - Segudet', zone: 'Z2', shipping_cost: 15, assembly_cost: 25 },
+            { id: 20, name: 'Ordino - Sornàs', zone: 'Z2', shipping_cost: 15, assembly_cost: 25 },
+            { id: 21, name: 'Ordino - Ansalonga', zone: 'Z2', shipping_cost: 15, assembly_cost: 25 },
+            { id: 22, name: 'Canillo - Canillo', zone: 'Z3', shipping_cost: 20, assembly_cost: 35 },
+            { id: 23, name: 'Canillo - El Forn', zone: 'Z3', shipping_cost: 20, assembly_cost: 35 },
+            { id: 24, name: 'Canillo - El Vilar', zone: 'Z3', shipping_cost: 20, assembly_cost: 35 },
+            { id: 25, name: 'Canillo - L\'Armiana', zone: 'Z3', shipping_cost: 20, assembly_cost: 35 },
+            { id: 26, name: 'Canillo - Meritxell', zone: 'Z3', shipping_cost: 20, assembly_cost: 35 },
+            { id: 27, name: 'Canillo - Els Plans', zone: 'Z3', shipping_cost: 20, assembly_cost: 35 },
+            { id: 28, name: 'Canillo - Prats', zone: 'Z3', shipping_cost: 20, assembly_cost: 35 },
+            { id: 29, name: 'Canillo - Ransol', zone: 'Z3', shipping_cost: 20, assembly_cost: 35 },
+            { id: 30, name: 'Canillo - El Tarter', zone: 'Z3', shipping_cost: 20, assembly_cost: 35 },
+            { id: 31, name: 'Canillo - Incles', zone: 'Z3', shipping_cost: 20, assembly_cost: 35 },
+            { id: 32, name: 'Canillo - Soldeu', zone: 'Z3', shipping_cost: 20, assembly_cost: 35 },
+            { id: 33, name: 'Canillo - Bordes d\'Envalira', zone: 'Z3', shipping_cost: 20, assembly_cost: 35 },
+            { id: 34, name: 'La Massana - Arinsal', zone: 'Z3', shipping_cost: 20, assembly_cost: 35 },
+            { id: 35, name: 'La Massana - Erts', zone: 'Z3', shipping_cost: 20, assembly_cost: 35 },
+            { id: 36, name: 'La Massana - Xixerella', zone: 'Z3', shipping_cost: 20, assembly_cost: 35 },
+            { id: 37, name: 'La Massana - Pal', zone: 'Z3', shipping_cost: 20, assembly_cost: 35 },
+            { id: 38, name: 'Ordino - La Cortinada', zone: 'Z3', shipping_cost: 20, assembly_cost: 35 },
+            { id: 39, name: 'Ordino - Arans', zone: 'Z3', shipping_cost: 20, assembly_cost: 35 },
+            { id: 40, name: 'Ordino - Llorts', zone: 'Z3', shipping_cost: 20, assembly_cost: 35 },
+            { id: 41, name: 'Ordino - El Serrat', zone: 'Z3', shipping_cost: 20, assembly_cost: 35 },
+            { id: 42, name: 'Sant Julià de Lòria - Aixirivall', zone: 'Z4', shipping_cost: 40, assembly_cost: 70 },
+            { id: 43, name: 'Sant Julià de Lòria - Nagol', zone: 'Z4', shipping_cost: 40, assembly_cost: 70 },
+            { id: 44, name: 'Sant Julià de Lòria - Certers', zone: 'Z4', shipping_cost: 40, assembly_cost: 70 },
+            { id: 45, name: 'Sant Julià de Lòria - Llumeneres', zone: 'Z4', shipping_cost: 40, assembly_cost: 70 },
+            { id: 46, name: 'Sant Julià de Lòria - Auvinyà', zone: 'Z4', shipping_cost: 40, assembly_cost: 70 },
+            { id: 47, name: 'Sant Julià de Lòria - Juberri', zone: 'Z4', shipping_cost: 40, assembly_cost: 70 },
+            { id: 48, name: 'Sant Julià de Lòria - Fontaneda', zone: 'Z4', shipping_cost: 40, assembly_cost: 70 },
+            { id: 49, name: 'Sant Julià de Lòria - Bixessarri', zone: 'Z4', shipping_cost: 40, assembly_cost: 70 },
+            { id: 50, name: 'Sant Julià de Lòria - Aixàs', zone: 'Z4', shipping_cost: 40, assembly_cost: 70 },
+            { id: 51, name: 'Sant Julià de Lòria - Canòlich', zone: 'Z4', shipping_cost: 40, assembly_cost: 70 },
+            { id: 52, name: 'Encamp - Els Cortals d\'Encamp', zone: 'Z4', shipping_cost: 40, assembly_cost: 70 },
+            { id: 53, name: 'Encamp - Pas de la Casa', zone: 'Z4', shipping_cost: 40, assembly_cost: 70 },
+            { id: 54, name: 'Encamp - Grau Roig', zone: 'Z4', shipping_cost: 40, assembly_cost: 70 }
         ];
 
-        // Objeto global de la app
         const app = {
             currentUser: null,
             pedidosData: [],
+            populacionSeleccionada: null,
+            pedidoEditando: null,
 
-            // LOGIN
             login: function() {
                 const employeeId = document.getElementById('employee-id').value.trim();
-                
                 if (!employeeId) {
                     this.mostrarLoginError('Ingresa tu número de empleado');
                     return;
                 }
-
                 if (!EMPLEADOS[employeeId]) {
                     this.mostrarLoginError('Número de empleado no válido');
                     return;
                 }
-
-                this.currentUser = {
-                    id: employeeId,
-                    name: EMPLEADOS[employeeId]
-                };
-
+                this.currentUser = { id: employeeId, name: EMPLEADOS[employeeId] };
                 document.getElementById('login-screen').style.display = 'none';
                 document.getElementById('app-screen').style.display = 'block';
                 document.getElementById('user-name').textContent = this.currentUser.name;
                 document.getElementById('user-id').textContent = `(${this.currentUser.id})`;
-
                 this.init();
             },
 
@@ -683,66 +756,69 @@
                 setTimeout(() => { error.style.display = 'none'; }, 5000);
             },
 
-            // INICIALIZAR
             init: function() {
                 this.cargarPoblaciones();
                 this.cargarPedidos();
             },
 
-            // CARGAR POBLACIONES
             cargarPoblaciones: function() {
-                const select = document.getElementById('population');
-                select.innerHTML = '<option value="">Selecciona población...</option>';
-                
-                POBLACIONES.forEach(p => {
-                    const option = document.createElement('option');
-                    option.value = p.id;
-                    option.textContent = `${p.name} (${p.zone})`;
-                    select.appendChild(option);
+                const searchInput = document.getElementById('population-search');
+                searchInput.addEventListener('input', (e) => this.buscarPoblaciones(e.target.value));
+                searchInput.addEventListener('focus', () => {
+                    if (searchInput.value) this.buscarPoblaciones(searchInput.value);
                 });
-
-                select.addEventListener('change', () => this.actualizarCostes());
             },
 
-            // ACTUALIZAR COSTES
-            actualizarCostes: function() {
-                const poblacionId = parseInt(document.getElementById('population').value);
-                const poblacion = POBLACIONES.find(p => p.id === poblacionId);
-
-                if (poblacion) {
-                    document.getElementById('zone').value = poblacion.zone;
-                    
-                    const shipping = poblacion.shipping_cost;
-                    let assembly = 0;
-
-                    if (document.getElementById('needs-assembly').checked) {
-                        assembly = poblacion.assembly_cost;
-                        document.getElementById('cost-assembly-row').style.display = 'flex';
-                        document.getElementById('cost-assembly').textContent = assembly.toFixed(2) + '€';
-                    } else {
-                        document.getElementById('cost-assembly-row').style.display = 'none';
-                    }
-
-                    document.getElementById('cost-shipping').textContent = shipping.toFixed(2) + '€';
-                    document.getElementById('cost-total').textContent = (shipping + assembly).toFixed(2) + '€';
+            buscarPoblaciones: function(texto) {
+                const resultados = document.getElementById('search-results');
+                if (!texto.trim()) {
+                    resultados.classList.remove('active');
+                    return;
                 }
+                const filtrados = POBLACIONES.filter(p => p.name.toLowerCase().includes(texto.toLowerCase()));
+                resultados.innerHTML = filtrados.map(p => `
+                    <div class="search-result-item" onclick="app.seleccionarPoblacion(${p.id}, '${p.name}', '${p.zone}', ${p.shipping_cost}, ${p.assembly_cost})">
+                        ${p.name} (${p.zone})
+                    </div>
+                `).join('');
+                resultados.classList.add('active');
             },
 
-            // TOGGLE MONTAJE
+            seleccionarPoblacion: function(id, name, zone, shipping, assembly) {
+                document.getElementById('population-search').value = name;
+                document.getElementById('zone').value = zone;
+                this.populacionSeleccionada = { id, name, zone, shipping_cost: shipping, assembly_cost: assembly };
+                document.getElementById('search-results').classList.remove('active');
+                this.actualizarCostes();
+            },
+
+            actualizarCostes: function() {
+                if (!this.populacionSeleccionada) return;
+                const shipping = this.populacionSeleccionada.shipping_cost;
+                let assembly = 0;
+                if (document.getElementById('needs-assembly').checked) {
+                    assembly = this.populacionSeleccionada.assembly_cost;
+                    document.getElementById('cost-assembly-row').style.display = 'flex';
+                    document.getElementById('cost-assembly').textContent = assembly.toFixed(2) + '€';
+                } else {
+                    document.getElementById('cost-assembly-row').style.display = 'none';
+                }
+                document.getElementById('cost-shipping').textContent = shipping.toFixed(2) + '€';
+                document.getElementById('cost-total').textContent = (shipping + assembly).toFixed(2) + '€';
+            },
+
             toggleAssembly: function() {
                 const checked = document.getElementById('needs-assembly').checked;
                 document.getElementById('assembly-time-group').classList.toggle('hidden', !checked);
                 this.actualizarCostes();
             },
 
-            // CREAR PEDIDO
             crearPedido: function() {
                 const invoice = document.getElementById('invoice').value.trim().toUpperCase();
                 const customerName = document.getElementById('customer-name').value.trim();
                 const customerEmail = document.getElementById('customer-email').value.trim();
                 const customerPhone = document.getElementById('customer-phone').value.trim();
                 const address = document.getElementById('address').value.trim();
-                const populationId = parseInt(document.getElementById('population').value);
                 const needsAssembly = document.getElementById('needs-assembly').checked;
                 const assemblyTime = needsAssembly ? parseInt(document.getElementById('assembly-time').value) : null;
                 const hasElevator = document.getElementById('has-elevator').checked;
@@ -751,11 +827,7 @@
                 if (!invoice) return this.mostrarMensaje('crear', 'Número de factura obligatorio', 'error');
                 if (!customerName) return this.mostrarMensaje('crear', 'Nombre del cliente obligatorio', 'error');
                 if (!address) return this.mostrarMensaje('crear', 'Dirección obligatoria', 'error');
-                if (!populationId) return this.mostrarMensaje('crear', 'Población obligatoria', 'error');
-
-                const poblacion = POBLACIONES.find(p => p.id === populationId);
-                const shippingCost = poblacion.shipping_cost;
-                const assemblyCost = needsAssembly ? poblacion.assembly_cost : 0;
+                if (!this.populacionSeleccionada) return this.mostrarMensaje('crear', 'Población obligatoria', 'error');
 
                 const pedido = {
                     id: Date.now().toString(),
@@ -765,21 +837,23 @@
                     customer_email: customerEmail || null,
                     customer_phone: customerPhone || null,
                     address: address,
-                    population_id: populationId,
-                    shipping_cost: shippingCost,
-                    assembly_cost: assemblyCost,
+                    population_id: this.populacionSeleccionada.id,
+                    shipping_cost: this.populacionSeleccionada.shipping_cost,
+                    assembly_cost: needsAssembly ? this.populacionSeleccionada.assembly_cost : 0,
                     needs_assembly: needsAssembly,
                     assembly_time: assemblyTime,
                     has_elevator: hasElevator,
                     observations: observations || null,
                     status: 'registrado',
                     created_at: new Date().toISOString(),
-                    populations: poblacion
+                    delivery_date: null,
+                    delivery_photo_url: null,
+                    delivery_person_name: null,
+                    populations: this.populacionSeleccionada
                 };
 
                 this.pedidosData.push(pedido);
                 this.guardarPedidos();
-
                 this.mostrarMensaje('crear', `✅ Pedido creado: ${invoice}`, 'success');
                 this.limpiarFormularioPedido();
                 this.cargarPedidos();
@@ -791,55 +865,36 @@
                 document.getElementById('customer-email').value = '';
                 document.getElementById('customer-phone').value = '';
                 document.getElementById('address').value = '';
-                document.getElementById('population').value = '';
+                document.getElementById('population-search').value = '';
                 document.getElementById('zone').value = '';
                 document.getElementById('needs-assembly').checked = false;
                 document.getElementById('assembly-time-group').classList.add('hidden');
                 document.getElementById('has-elevator').checked = false;
                 document.getElementById('observations').value = '';
+                this.populacionSeleccionada = null;
                 this.actualizarCostes();
             },
 
-            // CARGAR PEDIDOS DEL LOCALSTORAGE
             cargarPedidos: function() {
                 const stored = localStorage.getItem('maisons_pedidos');
                 this.pedidosData = stored ? JSON.parse(stored) : [];
                 this.mostrarPedidos(this.pedidosData);
             },
 
-            // GUARDAR PEDIDOS EN LOCALSTORAGE
             guardarPedidos: function() {
                 localStorage.setItem('maisons_pedidos', JSON.stringify(this.pedidosData));
             },
 
-            // MOSTRAR PEDIDOS
             mostrarPedidos: function(pedidos) {
                 if (pedidos.length === 0) {
                     document.getElementById('tabla-pedidos').innerHTML = '<p style="text-align: center; padding: 40px; color: #999;">Sin pedidos registrados</p>';
                     return;
                 }
-
-                let html = `
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Factura</th>
-                                <th>Cliente</th>
-                                <th>Población</th>
-                                <th>Estado</th>
-                                <th>Total</th>
-                                <th>Fecha</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                `;
-
+                let html = `<table><thead><tr><th>Factura</th><th>Cliente</th><th>Población</th><th>Estado</th><th>Total</th><th>Fecha</th><th>Acciones</th></tr></thead><tbody>`;
                 pedidos.forEach(p => {
                     const total = (p.shipping_cost + p.assembly_cost).toFixed(2);
                     const fecha = new Date(p.created_at).toLocaleDateString('es-ES');
                     const badge = this.getStatusBadge(p.status);
-
                     html += `
                         <tr>
                             <td><strong>${p.invoice_number}</strong></td>
@@ -849,23 +904,20 @@
                             <td>${total}€</td>
                             <td>${fecha}</td>
                             <td>
-                                <button class="btn-secondary" style="padding: 6px 12px; font-size: 12px;" onclick="app.verDetalles('${p.id}')">Ver</button>
+                                <button class="btn-secondary" onclick="app.verDetalles('${p.id}')">Ver</button>
+                                <button class="btn-warning" onclick="app.editarPedido('${p.id}')">Editar</button>
                             </td>
                         </tr>
                     `;
                 });
-
                 html += `</tbody></table>`;
                 document.getElementById('tabla-pedidos').innerHTML = html;
             },
 
-            // VER DETALLES
             verDetalles: function(pedidoId) {
                 const pedido = this.pedidosData.find(p => p.id === pedidoId);
                 if (!pedido) return;
-
                 const total = (pedido.shipping_cost + pedido.assembly_cost).toFixed(2);
-
                 let html = `
                     <div style="font-size: 14px; line-height: 2;">
                         <p><strong>Factura:</strong> ${pedido.invoice_number}</p>
@@ -877,15 +929,111 @@
                         <p><strong>Población:</strong> ${pedido.populations?.name}</p>
                         <p><strong>Porte:</strong> ${pedido.shipping_cost.toFixed(2)}€</p>
                         <p><strong>Montaje:</strong> ${pedido.assembly_cost.toFixed(2)}€</p>
+                        <p><strong>Fecha Entrega:</strong> ${pedido.delivery_date || 'Pendiente'}</p>
                         <p><strong style="font-size: 16px;">TOTAL: ${total}€</strong></p>
                     </div>
                 `;
-
                 document.getElementById('modal-body').innerHTML = html;
                 document.getElementById('modal-pedido').classList.add('active');
             },
 
-            // GET STATUS BADGE
+            editarPedido: function(pedidoId) {
+                this.pedidoEditando = this.pedidosData.find(p => p.id === pedidoId);
+                if (!this.pedidoEditando) return;
+
+                let html = `
+                    <div style="font-size: 14px;">
+                        <div class="form-group">
+                            <label>Estado:</label>
+                            <select id="edit-status">
+                                <option value="registrado" ${this.pedidoEditando.status === 'registrado' ? 'selected' : ''}>📝 Registrado</option>
+                                <option value="confirmado" ${this.pedidoEditando.status === 'confirmado' ? 'selected' : ''}>⏰ Confirmado</option>
+                                <option value="en_reparto" ${this.pedidoEditando.status === 'en_reparto' ? 'selected' : ''}>🚗 En Reparto</option>
+                                <option value="entregado" ${this.pedidoEditando.status === 'entregado' ? 'selected' : ''}>✅ Entregado</option>
+                                <option value="no_disponible" ${this.pedidoEditando.status === 'no_disponible' ? 'selected' : ''}>❌ No Disponible</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Fecha de Entrega:</label>
+                            <input type="date" id="edit-delivery-date" value="${this.pedidoEditando.delivery_date || ''}">
+                        </div>
+                        <div class="form-group">
+                            <label>Persona que Recibe:</label>
+                            <input type="text" id="edit-delivery-person" value="${this.pedidoEditando.delivery_person_name || ''}">
+                        </div>
+                        <div class="form-group">
+                            <label>Foto del Albarán:</label>
+                            <input type="file" id="edit-delivery-photo" accept="image/*">
+                        </div>
+                        <button class="btn-success" onclick="app.descargarAlbaran('${this.pedidoEditando.id}')">📄 Descargar Albarán PDF</button>
+                    </div>
+                `;
+                document.getElementById('modal-editar-body').innerHTML = html;
+                document.getElementById('modal-editar').classList.add('active');
+            },
+
+            guardarPedidoEditado: function() {
+                if (!this.pedidoEditando) return;
+                this.pedidoEditando.status = document.getElementById('edit-status').value;
+                this.pedidoEditando.delivery_date = document.getElementById('edit-delivery-date').value;
+                this.pedidoEditando.delivery_person_name = document.getElementById('edit-delivery-person').value;
+                this.guardarPedidos();
+                this.mostrarPedidos(this.pedidosData);
+                this.cerrarModalEditar();
+                this.mostrarMensaje('listar', '✅ Pedido actualizado', 'success');
+            },
+
+            descargarAlbaran: function(pedidoId) {
+                const pedido = this.pedidosData.find(p => p.id === pedidoId);
+                if (!pedido) return;
+
+                const element = document.createElement('div');
+                element.innerHTML = `
+                    <div style="padding: 20px; font-family: Arial; line-height: 1.8;">
+                        <h1 style="text-align: center; margin-bottom: 30px;">📦 ALBARÁN DE ENTREGA</h1>
+                        
+                        <div style="border: 1px solid #000; padding: 15px; margin-bottom: 20px;">
+                            <p><strong>FACTURA:</strong> ${pedido.invoice_number}</p>
+                            <p><strong>CLIENTE:</strong> ${pedido.customer_name}</p>
+                            <p><strong>TELÉFONO:</strong> ${pedido.customer_phone || '-'}</p>
+                            <p><strong>DIRECCIÓN:</strong> ${pedido.address}</p>
+                            <p><strong>POBLACIÓN:</strong> ${pedido.populations?.name || '-'}</p>
+                        </div>
+
+                        <div style="border: 1px solid #000; padding: 15px; margin-bottom: 20px;">
+                            <p><strong>PORTE:</strong> ${pedido.shipping_cost.toFixed(2)}€</p>
+                            <p><strong>MONTAJE:</strong> ${pedido.assembly_cost.toFixed(2)}€</p>
+                            <p><strong>TOTAL:</strong> ${(pedido.shipping_cost + pedido.assembly_cost).toFixed(2)}€</p>
+                        </div>
+
+                        <div style="border: 1px solid #000; padding: 15px; height: 150px; margin-bottom: 20px;">
+                            <p><strong>OBSERVACIONES:</strong></p>
+                            <p>${pedido.observations || '-'}</p>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 50px;">
+                            <div>
+                                <p><strong>Firma Cliente:</strong></p>
+                                <div style="border-top: 1px solid #000; margin-top: 60px; text-align: center;">_________________</div>
+                            </div>
+                            <div>
+                                <p><strong>Firma Repartidor:</strong></p>
+                                <div style="border-top: 1px solid #000; margin-top: 60px; text-align: center;">_________________</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                const opt = {
+                    margin: 10,
+                    filename: `alban-${pedido.invoice_number}.pdf`,
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { scale: 2 },
+                    jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' }
+                };
+                html2pdf().set(opt).from(element).save();
+            },
+
             getStatusBadge: function(status) {
                 const badges = {
                     'registrado': '<span class="badge badge-primary">📝 Registrado</span>',
@@ -897,21 +1045,16 @@
                 return badges[status] || status;
             },
 
-            // FILTRAR PEDIDOS
             filtrarPedidos: function() {
                 const filtro = document.getElementById('filtro-cliente').value.toLowerCase();
                 const estado = document.getElementById('filtro-estado').value;
-
                 let filtrados = this.pedidosData.filter(p => 
-                    (p.customer_name.toLowerCase().includes(filtro) || 
-                    p.invoice_number.toLowerCase().includes(filtro)) &&
+                    (p.customer_name.toLowerCase().includes(filtro) || p.invoice_number.toLowerCase().includes(filtro)) &&
                     (!estado || p.status === estado)
                 );
-
                 this.mostrarPedidos(filtrados);
             },
 
-            // SWITCH TAB
             switchTab: function(tab) {
                 document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
                 document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
@@ -919,12 +1062,15 @@
                 event.target.classList.add('active');
             },
 
-            // CERRAR MODAL
             cerrarModal: function() {
                 document.getElementById('modal-pedido').classList.remove('active');
             },
 
-            // MOSTRAR MENSAJE
+            cerrarModalEditar: function() {
+                document.getElementById('modal-editar').classList.remove('active');
+                this.pedidoEditando = null;
+            },
+
             mostrarMensaje: function(tab, mensaje, tipo) {
                 const div = document.getElementById(`mensaje-${tab}`);
                 const clase = tipo === 'error' ? 'alert-error' : 'alert-success';
@@ -933,7 +1079,6 @@
             }
         };
 
-        // FOCUS EN LOGIN
         document.getElementById('employee-id').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') app.login();
         });
