@@ -684,7 +684,12 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
+        const SUPABASE_URL = 'https://maisons-delivery.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_0G8WcTMGjN0QAMdRXqpvLA_pWEYt9c6';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
         const EMPLEADOS = {
             '5739': 'Eloy',
             '1974': 'María del Mar',
@@ -756,7 +761,7 @@
             populacionSeleccionada: null,
             pedidoEditando: null,
 
-            login: function() {
+            login: async function() {
                 const employeeId = document.getElementById('employee-id').value.trim();
                 if (!employeeId) {
                     this.mostrarLoginError('Ingresa tu número de empleado');
@@ -771,7 +776,7 @@
                 document.getElementById('app-screen').style.display = 'block';
                 document.getElementById('user-name').textContent = this.currentUser.name;
                 document.getElementById('user-id').textContent = `(${this.currentUser.id})`;
-                this.init();
+                await this.init();
             },
 
             logout: function() {
@@ -788,9 +793,9 @@
                 setTimeout(() => { error.style.display = 'none'; }, 5000);
             },
 
-            init: function() {
+            init: async function() {
                 this.cargarPoblaciones();
-                this.cargarPedidos();
+                await this.cargarPedidos();
             },
 
             cargarPoblaciones: function() {
@@ -854,7 +859,7 @@
                 this.actualizarCostes();
             },
 
-            crearPedido: function() {
+            crearPedido: async function() {
                 const invoice = document.getElementById('invoice').value.trim().toUpperCase();
                 const customerName = document.getElementById('customer-name').value.trim();
                 const customerEmail = document.getElementById('customer-email').value.trim();
@@ -875,7 +880,6 @@
                 if (!this.populacionSeleccionada) return this.mostrarMensaje('crear', 'Población obligatoria', 'error');
 
                 const pedido = {
-                    id: Date.now().toString(),
                     invoice_number: invoice,
                     created_by_employee_id: this.currentUser.id,
                     customer_name: customerName,
@@ -884,7 +888,7 @@
                     representative_name: representativeName || null,
                     representative_phone: representativePhone || null,
                     address: address,
-                    references: references || null,
+                    "references": references || null,
                     population_id: this.populacionSeleccionada.id,
                     shipping_cost: hasFurniture ? this.populacionSeleccionada.shipping_cost_furniture : this.populacionSeleccionada.shipping_cost,
                     assembly_cost: needsAssembly ? this.populacionSeleccionada.assembly_cost : 0,
@@ -893,19 +897,25 @@
                     has_elevator: hasElevator,
                     has_furniture: hasFurniture,
                     observations: observations || null,
-                    status: 'registrado',
-                    created_at: new Date().toISOString(),
-                    delivery_date: null,
-                    delivery_photo_url: null,
-                    delivery_person_name: null,
-                    populations: this.populacionSeleccionada
+                    status: 'registrado'
                 };
 
-                this.pedidosData.push(pedido);
-                this.guardarPedidos();
-                this.mostrarMensaje('crear', `✅ Pedido creado: ${invoice}`, 'success');
-                this.limpiarFormularioPedido();
-                this.cargarPedidos();
+                try {
+                    const { data, error } = await supabase
+                        .from('pedidos')
+                        .insert([pedido]);
+                    
+                    if (error) {
+                        this.mostrarMensaje('crear', `❌ Error: ${error.message}`, 'error');
+                        return;
+                    }
+                    
+                    this.mostrarMensaje('crear', `✅ Pedido creado: ${invoice}`, 'success');
+                    this.limpiarFormularioPedido();
+                    await this.cargarPedidos();
+                } catch (err) {
+                    this.mostrarMensaje('crear', `❌ Error: ${err.message}`, 'error');
+                }
             },
 
             limpiarFormularioPedido: function() {
@@ -928,14 +938,30 @@
                 this.actualizarCostes();
             },
 
-            cargarPedidos: function() {
-                const stored = localStorage.getItem('maisons_pedidos');
-                this.pedidosData = stored ? JSON.parse(stored) : [];
-                this.mostrarPedidos(this.pedidosData);
+            cargarPedidos: async function() {
+                try {
+                    const { data, error } = await supabase
+                        .from('pedidos')
+                        .select('*')
+                        .order('created_at', { ascending: false });
+                    
+                    if (error) {
+                        console.error('Error cargando pedidos:', error);
+                        this.pedidosData = [];
+                        return;
+                    }
+                    
+                    this.pedidosData = data || [];
+                    this.mostrarPedidos(this.pedidosData);
+                } catch (err) {
+                    console.error('Error:', err);
+                    this.pedidosData = [];
+                }
             },
 
-            guardarPedidos: function() {
-                localStorage.setItem('maisons_pedidos', JSON.stringify(this.pedidosData));
+            guardarPedidos: async function() {
+                // Ya se guardan automáticamente en Supabase cuando se crean
+                // Esta función es un placeholder para compatibilidad
             },
 
             mostrarPedidos: function(pedidos) {
@@ -1027,7 +1053,7 @@
                 document.getElementById('modal-editar').classList.add('active');
             },
 
-            guardarPedidoEditado: function() {
+            guardarPedidoEditado: async function() {
                 if (!this.pedidoEditando) return;
                 this.pedidoEditando.status = document.getElementById('edit-status').value;
                 this.pedidoEditando.delivery_date = document.getElementById('edit-delivery-date').value;
@@ -1038,10 +1064,27 @@
                     this.pedidoEditando.status = 'confirmado';
                 }
                 
-                this.guardarPedidos();
-                this.mostrarPedidos(this.pedidosData);
-                this.cerrarModalEditar();
-                alert('✅ Pedido actualizado correctamente');
+                try {
+                    const { error } = await supabase
+                        .from('pedidos')
+                        .update({
+                            status: this.pedidoEditando.status,
+                            delivery_date: this.pedidoEditando.delivery_date,
+                            delivery_person_name: this.pedidoEditando.delivery_person_name
+                        })
+                        .eq('id', this.pedidoEditando.id);
+                    
+                    if (error) {
+                        alert(`❌ Error: ${error.message}`);
+                        return;
+                    }
+                    
+                    this.mostrarPedidos(this.pedidosData);
+                    this.cerrarModalEditar();
+                    alert('✅ Pedido actualizado correctamente');
+                } catch (err) {
+                    alert(`❌ Error: ${err.message}`);
+                }
             },
 
             descargarAlbaran: function(pedidoId) {
