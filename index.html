@@ -688,7 +688,14 @@
     <script>
         const SUPABASE_URL = 'https://maisons-delivery.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_0G8WcTMGjN0QAMdRXqpvLA_pWEYt9c6';
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        let supabaseClient = null;
+        
+        // Inicializar Supabase cuando esté disponible
+        setTimeout(() => {
+            if (window.supabase && window.supabase.createClient) {
+                supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+            }
+        }, 100);
 
         const EMPLEADOS = {
             '5739': 'Eloy',
@@ -901,7 +908,7 @@
                 };
 
                 try {
-                    const { data, error } = await supabase
+                    const { data, error } = await supabaseClient
                         .from('pedidos')
                         .insert([pedido]);
                     
@@ -940,7 +947,7 @@
 
             cargarPedidos: async function() {
                 try {
-                    const { data, error } = await supabase
+                    const { data, error } = await supabaseClient
                         .from('pedidos')
                         .select('*')
                         .order('created_at', { ascending: false });
@@ -1065,7 +1072,7 @@
                 }
                 
                 try {
-                    const { error } = await supabase
+                    const { error } = await supabaseClient
                         .from('pedidos')
                         .update({
                             status: this.pedidoEditando.status,
