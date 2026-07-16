@@ -919,10 +919,7 @@
                 const address = document.getElementById('address').value.trim();
                 const references = document.getElementById('references').value.trim();
                 const needsAssembly = document.getElementById('needs-assembly').checked;
-                const assemblyTime = needsAssembly ? parseInt(document.getElementById('assembly-time').value) : null;
-                const hasElevator = document.getElementById('has-elevator').checked;
                 const hasFurniture = document.getElementById('has-furniture').checked;
-                const observations = document.getElementById('observations').value.trim();
 
                 if (!invoice) return this.mostrarMensaje('crear', 'Número de factura obligatorio', 'error');
                 if (!customerName) return this.mostrarMensaje('crear', 'Nombre del cliente obligatorio', 'error');
@@ -931,21 +928,17 @@
 
                 const pedidoData = {
                     invoice_number: invoice,
-                    created_by_employee_id: this.currentUser.id,
                     customer_name: customerName,
-                    customer_email: customerEmail || '',
-                    customer_phone: customerPhone || '',
-                    representative_name: representativeName || '',
-                    representative_phone: representativePhone || '',
+                    customer_email: customerEmail,
+                    customer_phone: customerPhone,
+                    representative_name: representativeName,
+                    representative_phone: representativePhone,
                     address: address,
-                    references: references || '',
+                    references: references,
                     shipping_cost: hasFurniture ? this.populacionSeleccionada.shipping_cost_furniture : this.populacionSeleccionada.shipping_cost,
                     assembly_cost: needsAssembly ? this.populacionSeleccionada.assembly_cost : 0,
                     needs_assembly: needsAssembly,
-                    assembly_time: assemblyTime || 0,
-                    has_elevator: hasElevator,
                     has_furniture: hasFurniture,
-                    observations: observations || '',
                     status: 'registrado',
                     created_at: new Date().toISOString()
                 };
