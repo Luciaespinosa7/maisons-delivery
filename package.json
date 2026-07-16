@@ -2,16 +2,7 @@
   "name": "maisons-delivery",
   "version": "1.0.0",
   "description": "Sistema de gestión de entregas Maisons du Monde",
-  "main": "index.html",
-  "scripts": {
-    "dev": "vercel dev",
-    "build": "vercel build"
-  },
   "dependencies": {
     "@supabase/supabase-js": "^2.38.4"
-  },
-  "devDependencies": {},
-  "keywords": [],
-  "author": "",
-  "license": "ISC"
+  }
 }
