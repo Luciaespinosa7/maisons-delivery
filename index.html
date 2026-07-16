@@ -685,8 +685,60 @@
     </div>
 
     <script>
-        // API base URL - funciona con Vercel
-        const API_URL = '/api/pedidos';
+        // Configuración Airtable
+        const AIRTABLE_BASE_ID = 'appu6ZiepoziOLFKM';
+        const AIRTABLE_TOKEN = 'patULvbwmzJxai6P3.56d6f0c5e7193f3c0aafb324ae31ba366ac43b31e52ae259bf9f229cd81ad0e8';
+        const AIRTABLE_TABLE = 'Table%201';
+
+        async function airtableGet() {
+            try {
+                const response = await fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${AIRTABLE_TABLE}`, {
+                    headers: { 'Authorization': `Bearer ${AIRTABLE_TOKEN}` }
+                });
+                if (!response.ok) throw new Error(`${response.status}`);
+                const data = await response.json();
+                return data.records || [];
+            } catch (error) {
+                console.error('Error Airtable GET:', error);
+                throw error;
+            }
+        }
+
+        async function airtablePost(fieldsData) {
+            try {
+                const response = await fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${AIRTABLE_TABLE}`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${AIRTABLE_TOKEN}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ records: [{ fields: fieldsData }] })
+                });
+                if (!response.ok) throw new Error(`${response.status}`);
+                return await response.json();
+            } catch (error) {
+                console.error('Error Airtable POST:', error);
+                throw error;
+            }
+        }
+
+        async function airtablePut(recordId, fieldsData) {
+            try {
+                const response = await fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${AIRTABLE_TABLE}/${recordId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Authorization': `Bearer ${AIRTABLE_TOKEN}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ fields: fieldsData })
+                });
+                if (!response.ok) throw new Error(`${response.status}`);
+                return await response.json();
+            } catch (error) {
+                console.error('Error Airtable PATCH:', error);
+                throw error;
+            }
+        }
 
         const EMPLEADOS = {
             '5739': 'Eloy',
@@ -759,7 +811,7 @@
             populacionSeleccionada: null,
             pedidoEditando: null,
 
-            login: function() {
+            login: async function() {
                 const employeeId = document.getElementById('employee-id').value.trim();
                 if (!employeeId) {
                     this.mostrarLoginError('Ingresa tu número de empleado');
@@ -774,7 +826,7 @@
                 document.getElementById('app-screen').style.display = 'block';
                 document.getElementById('user-name').textContent = this.currentUser.name;
                 document.getElementById('user-id').textContent = `(${this.currentUser.id})`;
-                this.init();
+                await this.init();
             },
 
             logout: function() {
@@ -791,9 +843,9 @@
                 setTimeout(() => { error.style.display = 'none'; }, 5000);
             },
 
-            init: function() {
+            init: async function() {
                 this.cargarPoblaciones();
-                this.cargarPedidos();
+                await this.cargarPedidos();
             },
 
             cargarPoblaciones: function() {
@@ -857,7 +909,7 @@
                 this.actualizarCostes();
             },
 
-            crearPedido: function() {
+            crearPedido: async function() {
                 const invoice = document.getElementById('invoice').value.trim().toUpperCase();
                 const customerName = document.getElementById('customer-name').value.trim();
                 const customerEmail = document.getElementById('customer-email').value.trim();
@@ -877,38 +929,35 @@
                 if (!address) return this.mostrarMensaje('crear', 'Dirección obligatoria', 'error');
                 if (!this.populacionSeleccionada) return this.mostrarMensaje('crear', 'Población obligatoria', 'error');
 
-                const pedido = {
-                    id: Date.now().toString(),
+                const pedidoData = {
                     invoice_number: invoice,
                     created_by_employee_id: this.currentUser.id,
                     customer_name: customerName,
-                    customer_email: customerEmail || null,
-                    customer_phone: customerPhone || null,
-                    representative_name: representativeName || null,
-                    representative_phone: representativePhone || null,
+                    customer_email: customerEmail || '',
+                    customer_phone: customerPhone || '',
+                    representative_name: representativeName || '',
+                    representative_phone: representativePhone || '',
                     address: address,
-                    references: references || null,
-                    population_id: this.populacionSeleccionada.id,
+                    references: references || '',
                     shipping_cost: hasFurniture ? this.populacionSeleccionada.shipping_cost_furniture : this.populacionSeleccionada.shipping_cost,
                     assembly_cost: needsAssembly ? this.populacionSeleccionada.assembly_cost : 0,
                     needs_assembly: needsAssembly,
-                    assembly_time: assemblyTime,
+                    assembly_time: assemblyTime || 0,
                     has_elevator: hasElevator,
                     has_furniture: hasFurniture,
-                    observations: observations || null,
+                    observations: observations || '',
                     status: 'registrado',
-                    created_at: new Date().toISOString(),
-                    delivery_date: null,
-                    delivery_photo_url: null,
-                    delivery_person_name: null,
-                    populations: this.populacionSeleccionada
+                    created_at: new Date().toISOString()
                 };
 
-                this.pedidosData.push(pedido);
-                this.guardarPedidos();
-                this.mostrarMensaje('crear', `✅ Pedido creado: ${invoice}`, 'success');
-                this.limpiarFormularioPedido();
-                this.cargarPedidos();
+                try {
+                    await airtablePost(pedidoData);
+                    this.mostrarMensaje('crear', `✅ Pedido creado: ${invoice}`, 'success');
+                    this.limpiarFormularioPedido();
+                    await this.cargarPedidos();
+                } catch (err) {
+                    this.mostrarMensaje('crear', `❌ Error: ${err.message}`, 'error');
+                }
             },
 
             limpiarFormularioPedido: function() {
@@ -931,10 +980,19 @@
                 this.actualizarCostes();
             },
 
-            cargarPedidos: function() {
-                const stored = localStorage.getItem('maisons_pedidos');
-                this.pedidosData = stored ? JSON.parse(stored) : [];
-                this.mostrarPedidos(this.pedidosData);
+            cargarPedidos: async function() {
+                try {
+                    const records = await airtableGet();
+                    this.pedidosData = records.map(record => ({
+                        id: record.id,
+                        ...record.fields
+                    }));
+                    this.mostrarPedidos(this.pedidosData);
+                } catch (err) {
+                    console.error('Error cargando pedidos:', err);
+                    this.mostrarMensaje('crear', '❌ Error al sincronizar con Airtable', 'error');
+                    this.pedidosData = [];
+                }
             },
 
             guardarPedidos: function() {
@@ -1030,21 +1088,29 @@
                 document.getElementById('modal-editar').classList.add('active');
             },
 
-            guardarPedidoEditado: function() {
+            guardarPedidoEditado: async function() {
                 if (!this.pedidoEditando) return;
                 this.pedidoEditando.status = document.getElementById('edit-status').value;
                 this.pedidoEditando.delivery_date = document.getElementById('edit-delivery-date').value;
                 this.pedidoEditando.delivery_person_name = document.getElementById('edit-delivery-person').value;
                 
-                // Auto actualizar a "confirmado" si tiene fecha y persona
                 if (this.pedidoEditando.delivery_date && this.pedidoEditando.delivery_person_name) {
                     this.pedidoEditando.status = 'confirmado';
                 }
                 
-                this.guardarPedidos();
-                this.mostrarPedidos(this.pedidosData);
-                this.cerrarModalEditar();
-                alert('✅ Pedido actualizado correctamente');
+                try {
+                    await airtablePut(this.pedidoEditando.id, {
+                        status: this.pedidoEditando.status,
+                        delivery_date: this.pedidoEditando.delivery_date,
+                        delivery_person_name: this.pedidoEditando.delivery_person_name
+                    });
+                    
+                    this.mostrarPedidos(this.pedidosData);
+                    this.cerrarModalEditar();
+                    alert('✅ Pedido actualizado correctamente');
+                } catch (err) {
+                    alert(`❌ Error: ${err.message}`);
+                }
             },
 
             descargarAlbaran: function(pedidoId) {
