@@ -1,8 +1,0 @@
-{
-  "name": "maisons-delivery",
-  "version": "1.0.0",
-  "description": "Sistema de gestión de entregas Maisons du Monde",
-  "dependencies": {
-    "@supabase/supabase-js": "^2.38.4"
-  }
-}
