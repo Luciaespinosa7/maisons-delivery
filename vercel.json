@@ -1,7 +1,6 @@
 {
-  "functions": {
-    "api/pedidos.js": {
-      "runtime": "nodejs18.x"
-    }
+  "buildCommand": "npm install",
+  "env": {
+    "SUPABASE_SERVICE_KEY": "@supabase_service_key"
   }
 }
