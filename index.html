@@ -688,57 +688,6 @@
         // API base URL - funciona con Vercel
         const API_URL = '/api/pedidos';
 
-        // Funciones para acceder al API
-        async function apiGet() {
-            try {
-                const response = await fetch(API_URL, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-                if (!response.ok) throw new Error(`Error: ${response.status}`);
-                return await response.json();
-            } catch (error) {
-                console.error('Error en GET:', error);
-                throw error;
-            }
-        }
-
-        async function apiPost(data) {
-            try {
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(data)
-                });
-                if (!response.ok) throw new Error(`Error: ${response.status}`);
-                return await response.json();
-            } catch (error) {
-                console.error('Error en POST:', error);
-                throw error;
-            }
-        }
-
-        async function apiPut(id, data) {
-            try {
-                const response = await fetch(API_URL, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ id, ...data })
-                });
-                if (!response.ok) throw new Error(`Error: ${response.status}`);
-                return await response.json();
-            } catch (error) {
-                console.error('Error en PUT:', error);
-                throw error;
-            }
-        }
-
         const EMPLEADOS = {
             '5739': 'Eloy',
             '1974': 'María del Mar',
@@ -810,7 +759,7 @@
             populacionSeleccionada: null,
             pedidoEditando: null,
 
-            login: async function() {
+            login: function() {
                 const employeeId = document.getElementById('employee-id').value.trim();
                 if (!employeeId) {
                     this.mostrarLoginError('Ingresa tu número de empleado');
@@ -825,7 +774,7 @@
                 document.getElementById('app-screen').style.display = 'block';
                 document.getElementById('user-name').textContent = this.currentUser.name;
                 document.getElementById('user-id').textContent = `(${this.currentUser.id})`;
-                await this.init();
+                this.init();
             },
 
             logout: function() {
@@ -842,9 +791,9 @@
                 setTimeout(() => { error.style.display = 'none'; }, 5000);
             },
 
-            init: async function() {
+            init: function() {
                 this.cargarPoblaciones();
-                await this.cargarPedidos();
+                this.cargarPedidos();
             },
 
             cargarPoblaciones: function() {
@@ -908,7 +857,7 @@
                 this.actualizarCostes();
             },
 
-            crearPedido: async function() {
+            crearPedido: function() {
                 const invoice = document.getElementById('invoice').value.trim().toUpperCase();
                 const customerName = document.getElementById('customer-name').value.trim();
                 const customerEmail = document.getElementById('customer-email').value.trim();
@@ -929,6 +878,7 @@
                 if (!this.populacionSeleccionada) return this.mostrarMensaje('crear', 'Población obligatoria', 'error');
 
                 const pedido = {
+                    id: Date.now().toString(),
                     invoice_number: invoice,
                     created_by_employee_id: this.currentUser.id,
                     customer_name: customerName,
@@ -946,17 +896,19 @@
                     has_elevator: hasElevator,
                     has_furniture: hasFurniture,
                     observations: observations || null,
-                    status: 'registrado'
+                    status: 'registrado',
+                    created_at: new Date().toISOString(),
+                    delivery_date: null,
+                    delivery_photo_url: null,
+                    delivery_person_name: null,
+                    populations: this.populacionSeleccionada
                 };
 
-                try {
-                    await apiPost(pedido);
-                    this.mostrarMensaje('crear', `✅ Pedido creado: ${invoice}`, 'success');
-                    this.limpiarFormularioPedido();
-                    await this.cargarPedidos();
-                } catch (err) {
-                    this.mostrarMensaje('crear', `❌ Error: ${err.message}`, 'error');
-                }
+                this.pedidosData.push(pedido);
+                this.guardarPedidos();
+                this.mostrarMensaje('crear', `✅ Pedido creado: ${invoice}`, 'success');
+                this.limpiarFormularioPedido();
+                this.cargarPedidos();
             },
 
             limpiarFormularioPedido: function() {
@@ -979,21 +931,14 @@
                 this.actualizarCostes();
             },
 
-            cargarPedidos: async function() {
-                try {
-                    const data = await apiGet();
-                    this.pedidosData = data || [];
-                    this.mostrarPedidos(this.pedidosData);
-                } catch (err) {
-                    console.error('Error cargando pedidos:', err);
-                    this.mostrarMensaje('crear', '❌ Error al cargar pedidos', 'error');
-                    this.pedidosData = [];
-                }
+            cargarPedidos: function() {
+                const stored = localStorage.getItem('maisons_pedidos');
+                this.pedidosData = stored ? JSON.parse(stored) : [];
+                this.mostrarPedidos(this.pedidosData);
             },
 
-            guardarPedidos: async function() {
-                // Ya se guardan automáticamente en Supabase cuando se crean
-                // Esta función es un placeholder para compatibilidad
+            guardarPedidos: function() {
+                localStorage.setItem('maisons_pedidos', JSON.stringify(this.pedidosData));
             },
 
             mostrarPedidos: function(pedidos) {
@@ -1085,7 +1030,7 @@
                 document.getElementById('modal-editar').classList.add('active');
             },
 
-            guardarPedidoEditado: async function() {
+            guardarPedidoEditado: function() {
                 if (!this.pedidoEditando) return;
                 this.pedidoEditando.status = document.getElementById('edit-status').value;
                 this.pedidoEditando.delivery_date = document.getElementById('edit-delivery-date').value;
@@ -1096,19 +1041,10 @@
                     this.pedidoEditando.status = 'confirmado';
                 }
                 
-                try {
-                    await apiPut(this.pedidoEditando.id, {
-                        status: this.pedidoEditando.status,
-                        delivery_date: this.pedidoEditando.delivery_date,
-                        delivery_person_name: this.pedidoEditando.delivery_person_name
-                    });
-                    
-                    this.mostrarPedidos(this.pedidosData);
-                    this.cerrarModalEditar();
-                    alert('✅ Pedido actualizado correctamente');
-                } catch (err) {
-                    alert(`❌ Error: ${err.message}`);
-                }
+                this.guardarPedidos();
+                this.mostrarPedidos(this.pedidosData);
+                this.cerrarModalEditar();
+                alert('✅ Pedido actualizado correctamente');
             },
 
             descargarAlbaran: function(pedidoId) {
