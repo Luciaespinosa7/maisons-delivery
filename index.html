@@ -697,6 +697,22 @@
             }
         }, 100);
 
+        // Función para esperar a que Supabase esté listo
+        function getSupabase() {
+            return new Promise((resolve) => {
+                if (supabaseClient) {
+                    resolve(supabaseClient);
+                } else {
+                    const check = setInterval(() => {
+                        if (supabaseClient) {
+                            clearInterval(check);
+                            resolve(supabaseClient);
+                        }
+                    }, 50);
+                }
+            });
+        }
+
         const EMPLEADOS = {
             '5739': 'Eloy',
             '1974': 'María del Mar',
@@ -908,7 +924,8 @@
                 };
 
                 try {
-                    const { data, error } = await supabaseClient
+                    const sb = await getSupabase();
+                    const { data, error } = await sb
                         .from('pedidos')
                         .insert([pedido]);
                     
@@ -947,7 +964,8 @@
 
             cargarPedidos: async function() {
                 try {
-                    const { data, error } = await supabaseClient
+                    const sb = await getSupabase();
+                    const { data, error } = await sb
                         .from('pedidos')
                         .select('*')
                         .order('created_at', { ascending: false });
@@ -1072,7 +1090,8 @@
                 }
                 
                 try {
-                    const { error } = await supabaseClient
+                    const sb = await getSupabase();
+                    const { error } = await sb
                         .from('pedidos')
                         .update({
                             status: this.pedidoEditando.status,
