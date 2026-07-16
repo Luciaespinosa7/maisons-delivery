@@ -684,33 +684,59 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        const SUPABASE_URL = 'https://maisons-delivery.supabase.co';
-        const SUPABASE_KEY = 'sb_publishable_0G8WcTMGjN0QAMdRXqpvLA_pWEYt9c6';
-        let supabaseClient = null;
-        
-        // Inicializar Supabase cuando esté disponible
-        setTimeout(() => {
-            if (window.supabase && window.supabase.createClient) {
-                supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-            }
-        }, 100);
+        // API base URL - funciona con Vercel
+        const API_URL = '/api/pedidos';
 
-        // Función para esperar a que Supabase esté listo
-        function getSupabase() {
-            return new Promise((resolve) => {
-                if (supabaseClient) {
-                    resolve(supabaseClient);
-                } else {
-                    const check = setInterval(() => {
-                        if (supabaseClient) {
-                            clearInterval(check);
-                            resolve(supabaseClient);
-                        }
-                    }, 50);
-                }
-            });
+        // Funciones para acceder al API
+        async function apiGet() {
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                if (!response.ok) throw new Error(`Error: ${response.status}`);
+                return await response.json();
+            } catch (error) {
+                console.error('Error en GET:', error);
+                throw error;
+            }
+        }
+
+        async function apiPost(data) {
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                if (!response.ok) throw new Error(`Error: ${response.status}`);
+                return await response.json();
+            } catch (error) {
+                console.error('Error en POST:', error);
+                throw error;
+            }
+        }
+
+        async function apiPut(id, data) {
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ id, ...data })
+                });
+                if (!response.ok) throw new Error(`Error: ${response.status}`);
+                return await response.json();
+            } catch (error) {
+                console.error('Error en PUT:', error);
+                throw error;
+            }
         }
 
         const EMPLEADOS = {
@@ -924,16 +950,7 @@
                 };
 
                 try {
-                    const sb = await getSupabase();
-                    const { data, error } = await sb
-                        .from('pedidos')
-                        .insert([pedido]);
-                    
-                    if (error) {
-                        this.mostrarMensaje('crear', `❌ Error: ${error.message}`, 'error');
-                        return;
-                    }
-                    
+                    await apiPost(pedido);
                     this.mostrarMensaje('crear', `✅ Pedido creado: ${invoice}`, 'success');
                     this.limpiarFormularioPedido();
                     await this.cargarPedidos();
@@ -964,22 +981,12 @@
 
             cargarPedidos: async function() {
                 try {
-                    const sb = await getSupabase();
-                    const { data, error } = await sb
-                        .from('pedidos')
-                        .select('*')
-                        .order('created_at', { ascending: false });
-                    
-                    if (error) {
-                        console.error('Error cargando pedidos:', error);
-                        this.pedidosData = [];
-                        return;
-                    }
-                    
+                    const data = await apiGet();
                     this.pedidosData = data || [];
                     this.mostrarPedidos(this.pedidosData);
                 } catch (err) {
-                    console.error('Error:', err);
+                    console.error('Error cargando pedidos:', err);
+                    this.mostrarMensaje('crear', '❌ Error al cargar pedidos', 'error');
                     this.pedidosData = [];
                 }
             },
@@ -1090,20 +1097,11 @@
                 }
                 
                 try {
-                    const sb = await getSupabase();
-                    const { error } = await sb
-                        .from('pedidos')
-                        .update({
-                            status: this.pedidoEditando.status,
-                            delivery_date: this.pedidoEditando.delivery_date,
-                            delivery_person_name: this.pedidoEditando.delivery_person_name
-                        })
-                        .eq('id', this.pedidoEditando.id);
-                    
-                    if (error) {
-                        alert(`❌ Error: ${error.message}`);
-                        return;
-                    }
+                    await apiPut(this.pedidoEditando.id, {
+                        status: this.pedidoEditando.status,
+                        delivery_date: this.pedidoEditando.delivery_date,
+                        delivery_person_name: this.pedidoEditando.delivery_person_name
+                    });
                     
                     this.mostrarPedidos(this.pedidosData);
                     this.cerrarModalEditar();
