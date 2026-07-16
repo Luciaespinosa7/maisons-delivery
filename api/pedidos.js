@@ -1,6 +1,6 @@
-import { createClient } from '@supabase/supabase-js';
+const { createClient } = require('@supabase/supabase-js');
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
     // CORS headers
     res.setHeader('Access-Control-Allow-Credentials', 'true');
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -18,6 +18,7 @@ export default async function handler(req, res) {
         const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY;
 
         if (!SUPABASE_KEY) {
+            console.error('SUPABASE_SERVICE_KEY no configurada');
             return res.status(500).json({ error: 'SUPABASE_SERVICE_KEY no configurada' });
         }
 
@@ -30,23 +31,33 @@ export default async function handler(req, res) {
                 .order('created_at', { ascending: false });
 
             if (error) {
+                console.error('Error SELECT:', error);
                 return res.status(400).json({ error: error.message });
             }
             return res.status(200).json(data);
         }
 
         if (req.method === 'POST') {
+            if (!req.body) {
+                return res.status(400).json({ error: 'Body requerido' });
+            }
+
             const { data, error } = await supabase
                 .from('pedidos')
                 .insert([req.body]);
 
             if (error) {
+                console.error('Error INSERT:', error);
                 return res.status(400).json({ error: error.message });
             }
             return res.status(201).json(data);
         }
 
         if (req.method === 'PUT') {
+            if (!req.body) {
+                return res.status(400).json({ error: 'Body requerido' });
+            }
+
             const { id, ...updateData } = req.body;
 
             if (!id) {
@@ -59,6 +70,7 @@ export default async function handler(req, res) {
                 .eq('id', id);
 
             if (error) {
+                console.error('Error UPDATE:', error);
                 return res.status(400).json({ error: error.message });
             }
             return res.status(200).json(data);
@@ -66,7 +78,7 @@ export default async function handler(req, res) {
 
         return res.status(405).json({ error: 'Método no permitido' });
     } catch (error) {
-        console.error('Error:', error);
-        return res.status(500).json({ error: error.message });
+        console.error('Error catch:', error);
+        return res.status(500).json({ error: error.message || 'Error desconocido' });
     }
-}
+};
