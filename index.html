@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Maisons du Monde - Gestión de Entregas</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <script async src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/index.min.js"></script>
+    <script async src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/index.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -943,14 +943,19 @@
 
             enviarEmailLogistica: async function(pedidoData) {
                 try {
-                    // Esperar a que EmailJS esté disponible
+                    // Esperar a que EmailJS esté disponible (reintentos)
+                    let intentosEmail = 0;
+                    while (typeof emailjs === 'undefined' && intentosEmail < 20) {
+                        await new Promise(resolve => setTimeout(resolve, 500));
+                        intentosEmail++;
+                    }
+
                     if (typeof emailjs === 'undefined') {
-                        console.warn('EmailJS aún no disponible, reintentando...');
-                        setTimeout(() => this.enviarEmailLogistica(pedidoData), 1000);
+                        console.warn('⚠️ EmailJS no disponible. Pedido creado pero email no enviado.');
                         return;
                     }
 
-                    await emailjs.send('service_prjsf2c', 'template_he6ten1', {
+                    const resultado = await emailjs.send('service_prjsf2c', 'template_he6ten1', {
                         invoice_number: pedidoData.invoice_number,
                         customer_name: pedidoData.customer_name,
                         customer_phone: pedidoData.customer_phone,
@@ -967,7 +972,7 @@
                     console.log('✅ Email enviat correctament a l\'equip de logística');
                     console.log('📧 Destinataris: luciae@viamoda.ad, javiers@viamoda.ad, etiquetatge_mag@viamoda.ad');
                 } catch (error) {
-                    console.error('Error al enviar email:', error);
+                    console.error('⚠️ Error al enviar email (pedido igual creat):', error);
                     // No romper la app si falla el email
                 }
             },
@@ -1289,16 +1294,21 @@
             let intentos = 0;
             const initEmailJS = setInterval(() => {
                 if (typeof emailjs !== 'undefined') {
-                    emailjs.init('Yx691AjGkHsVptqiH');
-                    console.log('EmailJS inicializado correctamente');
-                    clearInterval(initEmailJS);
-                } else if (intentos < 10) {
+                    try {
+                        emailjs.init('Yx691AjGkHsVptqiH');
+                        console.log('✅ EmailJS inicializado correctamente');
+                        clearInterval(initEmailJS);
+                    } catch (e) {
+                        console.error('Error al inicializar EmailJS:', e);
+                    }
+                } else if (intentos < 30) {
                     intentos++;
+                    console.log('EmailJS intentando cargarse... (' + intentos + '/30)');
                 } else {
-                    console.warn('No se pudo inicializar EmailJS después de 10 intentos');
+                    console.warn('⚠️ EmailJS no se cargó. Los emails pueden no enviarse.');
                     clearInterval(initEmailJS);
                 }
-            }, 500);
+            }, 300);
         });
     </script>
 </body>
