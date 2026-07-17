@@ -650,16 +650,15 @@
             }
         }
 
-        async function firebasePut(id, updateData) {
+        async function firebaseDelete(id) {
             try {
                 const response = await fetch(FIREBASE_DB_URL + '/' + id + '.json', {
-                    method: 'PATCH',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(updateData)
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' }
                 });
                 return await response.json();
             } catch (error) {
-                console.error('Error Firebase PUT:', error);
+                console.error('Error Firebase DELETE:', error);
                 throw error;
             }
         }
@@ -919,6 +918,7 @@
                         <div class="pedido-actions">
                             <button class="btn-small" onclick="app.abrirModalEditar('${p.id}')">Editar</button>
                             <button class="btn-small" onclick="app.descargarAlbaran('${p.id}')">Albarán</button>
+                            <button class="btn-small" style="background: #d32f2f;" onclick="app.eliminarPedido('${p.id}')">Eliminar</button>
                         </div>
                     </div>
                 `).join('');
@@ -956,6 +956,19 @@
                     alert('✅ Pedido actualizado');
                 } catch (error) {
                     alert('❌ Error: ' + error.message);
+                }
+            },
+
+            eliminarPedido: async function(id) {
+                if (!confirm('¿Estás seguro de que quieres eliminar este pedido? Esta acción no se puede deshacer.')) {
+                    return;
+                }
+                try {
+                    await firebaseDelete(id);
+                    await this.cargarPedidos();
+                    alert('✅ Pedido eliminado correctamente');
+                } catch (error) {
+                    alert('❌ Error al eliminar: ' + error.message);
                 }
             },
 
