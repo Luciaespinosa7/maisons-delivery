@@ -625,8 +625,10 @@
             <div class="form-group">
                 <label>Foto Albarán Firmado (JPG/PNG)</label>
                 <input type="file" id="edit-delivery-photo" accept="image/jpeg,image/png" />
+                <div id="photo-preview" style="margin-top: 10px;"></div>
             </div>
             <button class="btn-primary" onclick="app.guardarPedidoEditado()">Guardar Cambios</button>
+            <button class="btn-primary" style="background: #d32f2f; margin-left: 10px;" id="delete-photo-btn" style="display: none;" onclick="app.borrarFotoAlbaran()">Borrar Foto</button>
         </div>
     </div>
 
@@ -961,6 +963,25 @@
                 document.getElementById('edit-status').value = pedido.status || 'registrado';
                 document.getElementById('edit-delivery-date').value = pedido.delivery_date || '';
                 document.getElementById('edit-delivery-person').value = pedido.delivery_person_name || '';
+                document.getElementById('edit-delivery-photo').value = '';
+                
+                // Mostrar foto existente si hay
+                const photoPreview = document.getElementById('photo-preview');
+                const deletePhotoBtn = document.getElementById('delete-photo-btn');
+                
+                if (pedido.delivery_photo_url) {
+                    photoPreview.innerHTML = `
+                        <div style="background: #f5f5f5; padding: 10px; border-radius: 4px;">
+                            <p style="font-size: 11px; color: #666; margin: 0 0 10px 0;"><strong>Foto actual:</strong></p>
+                            <img src="${pedido.delivery_photo_url}" style="max-width: 100%; height: auto; max-height: 200px; border: 1px solid #ddd; border-radius: 4px;" />
+                        </div>
+                    `;
+                    deletePhotoBtn.style.display = 'inline-block';
+                } else {
+                    photoPreview.innerHTML = '';
+                    deletePhotoBtn.style.display = 'none';
+                }
+                
                 document.getElementById('edit-modal').classList.add('active');
             },
 
@@ -979,17 +1000,14 @@
 
                 // Lógica automática de estados
                 if (photoFile) {
-                    // Si sube foto → ENTREGADO
+                    // Si sube foto → ENTREGADO (automático)
                     status = 'entregado';
                 } else if (deliveryDate) {
-                    // Si pone fecha → CONFIRMADO
+                    // Si pone fecha → CONFIRMADO (automático)
                     status = 'confirmado';
-                } else if (status === 'preparado') {
-                    // Si marca preparado manualmente → PREPARADO
-                    status = 'preparado';
                 } else {
-                    // Inicial → REGISTRADO
-                    status = 'registrado';
+                    // Si no hay foto ni fecha nueva, respetar el estado seleccionado en el dropdown
+                    status = document.getElementById('edit-status').value;
                 }
 
                 // Convertir foto a base64 si existe
@@ -1005,8 +1023,8 @@
                 try {
                     const updateData = {
                         status: status,
-                        delivery_date: deliveryDate || null,
-                        delivery_person_name: deliveryPerson || null
+                        delivery_date: deliveryDate || this.pedidoEditando.delivery_date || null,
+                        delivery_person_name: deliveryPerson || this.pedidoEditando.delivery_person_name || null
                     };
 
                     if (photoBase64) {
@@ -1032,6 +1050,31 @@
                     alert('✅ Pedido eliminado correctamente');
                 } catch (error) {
                     alert('❌ Error al eliminar: ' + error.message);
+                }
+            },
+
+            borrarFotoAlbaran: async function() {
+                if (!this.pedidoEditando) return;
+                if (!confirm('¿Estás seguro de que quieres borrar la foto del albarán?')) {
+                    return;
+                }
+                
+                try {
+                    // Cambiar estado a confirmado si estaba en entregado
+                    let newStatus = this.pedidoEditando.status;
+                    if (newStatus === 'entregado') {
+                        newStatus = 'confirmado';
+                    }
+                    
+                    await firebasePut(this.pedidoEditando.id, {
+                        delivery_photo_url: null,
+                        status: newStatus
+                    });
+                    await this.cargarPedidos();
+                    this.cerrarModalEditar();
+                    alert('✅ Foto del albarán eliminada');
+                } catch (error) {
+                    alert('❌ Error: ' + error.message);
                 }
             },
 
