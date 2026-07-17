@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Maisons du Monde - Gestión de Entregas</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/index.min.js"></script>
+    <script async src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/index.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -279,18 +279,21 @@
             margin-bottom: 20px;
             display: none;
             font-size: 12px;
+            line-height: 1.6;
         }
 
         .message.success {
             background: #4caf50;
             color: white;
             display: block;
+            font-weight: bold;
         }
 
         .message.error {
             background: #f44336;
             color: white;
             display: block;
+            font-weight: bold;
         }
 
         .pedidos-list {
@@ -784,6 +787,12 @@
                 document.getElementById('app-screen').style.display = 'block';
                 document.getElementById('user-name').textContent = this.currentUser.name;
                 document.getElementById('user-id').textContent = `(${this.currentUser.id})`;
+                
+                // Pedir permiso de notificaciones
+                if ('Notification' in window && Notification.permission === 'default') {
+                    Notification.requestPermission();
+                }
+                
                 this.init();
             },
 
@@ -914,7 +923,17 @@
                     // Enviar email al equipo de logística
                     await this.enviarEmailLogistica(pedidoData);
                     
-                    this.mostrarMensaje('create-message', `✅ Pedido creat: ${invoice}`, 'success');
+                    // Mostrar notificación de éxito mejorada
+                    this.mostrarMensaje('create-message', `✅ Pedido creat exitosament: ${invoice}\n📧 Email enviat a l'equip de logística`, 'success');
+                    
+                    // Notificación del navegador si está disponible
+                    if ('Notification' in window && Notification.permission === 'granted') {
+                        new Notification('Pedido Creat', {
+                            body: `Pedido ${invoice} creat correctament!\nEmail enviat a l'equip de logística.`,
+                            icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="%231a1a1a"/><text x="50" y="50" text-anchor="middle" dy=".3em" fill="white" font-size="60">✓</text></svg>'
+                        });
+                    }
+                    
                     this.limpiarFormulario();
                     await this.cargarPedidos();
                 } catch (error) {
@@ -924,6 +943,13 @@
 
             enviarEmailLogistica: async function(pedidoData) {
                 try {
+                    // Esperar a que EmailJS esté disponible
+                    if (typeof emailjs === 'undefined') {
+                        console.warn('EmailJS aún no disponible, reintentando...');
+                        setTimeout(() => this.enviarEmailLogistica(pedidoData), 1000);
+                        return;
+                    }
+
                     await emailjs.send('service_prjsf2c', 'template_he6ten1', {
                         invoice_number: pedidoData.invoice_number,
                         customer_name: pedidoData.customer_name,
@@ -938,9 +964,11 @@
                         needs_assembly: pedidoData.needs_assembly ? 'Sí' : 'No',
                         observations: pedidoData.observations || 'Cap'
                     });
-                    console.log('Email enviat correctament a l\'equip de logística');
+                    console.log('✅ Email enviat correctament a l\'equip de logística');
+                    console.log('📧 Destinataris: luciae@viamoda.ad, javiers@viamoda.ad, etiquetatge_mag@viamoda.ad');
                 } catch (error) {
                     console.error('Error al enviar email:', error);
+                    // No romper la app si falla el email
                 }
             },
 
@@ -1231,9 +1259,10 @@
                 const element = document.getElementById(elementId);
                 element.textContent = mensaje;
                 element.className = 'message ' + tipo;
+                // Mostrar durante 5 segundos en lugar de 3
                 setTimeout(() => {
                     element.className = 'message';
-                }, 3000);
+                }, 5000);
             }
         };
 
@@ -1255,12 +1284,22 @@
                     }
                 });
             }
-        });
 
-        // Inicializar EmailJS
-        if (typeof emailjs !== 'undefined') {
-            emailjs.init('Yx691AjGkHsVptqiH');
-        }
+            // Inicializar EmailJS cuando esté disponible
+            let intentos = 0;
+            const initEmailJS = setInterval(() => {
+                if (typeof emailjs !== 'undefined') {
+                    emailjs.init('Yx691AjGkHsVptqiH');
+                    console.log('EmailJS inicializado correctamente');
+                    clearInterval(initEmailJS);
+                } else if (intentos < 10) {
+                    intentos++;
+                } else {
+                    console.warn('No se pudo inicializar EmailJS después de 10 intentos');
+                    clearInterval(initEmailJS);
+                }
+            }, 500);
+        });
     </script>
 </body>
 </html>
