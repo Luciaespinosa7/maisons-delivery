@@ -663,6 +663,20 @@
             }
         }
 
+        async function firebasePut(id, updateData) {
+            try {
+                const response = await fetch(FIREBASE_DB_URL + '/' + id + '.json', {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(updateData)
+                });
+                return await response.json();
+            } catch (error) {
+                console.error('Error Firebase PUT:', error);
+                throw error;
+            }
+        }
+
         const EMPLEADOS = {
             '5739': 'Eloy',
             '1974': 'María del Mar',
