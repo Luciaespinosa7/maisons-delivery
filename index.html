@@ -685,57 +685,53 @@
     </div>
 
     <script>
-        // Configuración Airtable
-        const AIRTABLE_BASE_ID = 'appu6ZiepoziOLFKM';
-        const AIRTABLE_TOKEN = 'patULvbwmzJxai6P3.56d6f0c5e7193f3c0aafb324ae31ba366ac43b31e52ae259bf9f229cd81ad0e8';
-        const AIRTABLE_TABLE = 'tblWpfNUom8BFfZeh';
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js"></script>
+    <script>
+        // Configuración Firebase
+        const firebaseConfig = {
+            databaseURL: 'https://maisons-delivery-default-rtdb.europe-west1.firebasedatabase.app/'
+        };
 
-        async function airtableGet() {
+        // Inicializar Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        // Funciones Firebase
+        async function firebaseGet() {
             try {
-                const response = await fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${AIRTABLE_TABLE}`, {
-                    headers: { 'Authorization': `Bearer ${AIRTABLE_TOKEN}` }
-                });
-                if (!response.ok) throw new Error(`${response.status}`);
-                const data = await response.json();
-                return data.records || [];
+                const snapshot = await database.ref('pedidos').get();
+                if (snapshot.exists()) {
+                    const data = snapshot.val();
+                    return Object.keys(data).map(key => ({
+                        id: key,
+                        ...data[key]
+                    }));
+                }
+                return [];
             } catch (error) {
-                console.error('Error Airtable GET:', error);
+                console.error('Error Firebase GET:', error);
                 throw error;
             }
         }
 
-        async function airtablePost(fieldsData) {
+        async function firebasePost(pedidoData) {
             try {
-                const response = await fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${AIRTABLE_TABLE}`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${AIRTABLE_TOKEN}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ records: [{ fields: fieldsData }] })
-                });
-                if (!response.ok) throw new Error(`${response.status}`);
-                return await response.json();
+                const newRef = database.ref('pedidos').push();
+                await newRef.set(pedidoData);
+                return { id: newRef.key, ...pedidoData };
             } catch (error) {
-                console.error('Error Airtable POST:', error);
+                console.error('Error Firebase POST:', error);
                 throw error;
             }
         }
 
-        async function airtablePut(recordId, fieldsData) {
+        async function firebasePut(id, updateData) {
             try {
-                const response = await fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${AIRTABLE_TABLE}/${recordId}`, {
-                    method: 'PATCH',
-                    headers: {
-                        'Authorization': `Bearer ${AIRTABLE_TOKEN}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ fields: fieldsData })
-                });
-                if (!response.ok) throw new Error(`${response.status}`);
-                return await response.json();
+                await database.ref(`pedidos/${id}`).update(updateData);
+                return { id, ...updateData };
             } catch (error) {
-                console.error('Error Airtable PATCH:', error);
+                console.error('Error Firebase PUT:', error);
                 throw error;
             }
         }
@@ -926,17 +922,20 @@
                 if (!address) return this.mostrarMensaje('crear', 'Dirección obligatoria', 'error');
                 if (!this.populacionSeleccionada) return this.mostrarMensaje('crear', 'Población obligatoria', 'error');
 
+                const shippingCost = hasFurniture ? this.populacionSeleccionada.shipping_cost_furniture : this.populacionSeleccionada.shipping_cost;
+                const assemblyCost = needsAssembly ? this.populacionSeleccionada.assembly_cost : 0;
+
                 const pedidoData = {
                     invoice_number: invoice,
                     customer_name: customerName,
-                    customer_email: customerEmail,
-                    customer_phone: customerPhone,
-                    representative_name: representativeName,
-                    representative_phone: representativePhone,
+                    customer_email: customerEmail || '',
+                    customer_phone: customerPhone || '',
+                    representative_name: representativeName || '',
+                    representative_phone: representativePhone || '',
                     address: address,
-                    references: references,
-                    shipping_cost: hasFurniture ? this.populacionSeleccionada.shipping_cost_furniture : this.populacionSeleccionada.shipping_cost,
-                    assembly_cost: needsAssembly ? this.populacionSeleccionada.assembly_cost : 0,
+                    references: references || '',
+                    shipping_cost: shippingCost,
+                    assembly_cost: assemblyCost,
                     needs_assembly: needsAssembly,
                     has_furniture: hasFurniture,
                     status: 'registrado',
@@ -944,7 +943,7 @@
                 };
 
                 try {
-                    await airtablePost(pedidoData);
+                    await firebasePost(pedidoData);
                     this.mostrarMensaje('crear', `✅ Pedido creado: ${invoice}`, 'success');
                     this.limpiarFormularioPedido();
                     await this.cargarPedidos();
@@ -975,15 +974,12 @@
 
             cargarPedidos: async function() {
                 try {
-                    const records = await airtableGet();
-                    this.pedidosData = records.map(record => ({
-                        id: record.id,
-                        ...record.fields
-                    }));
+                    const records = await firebaseGet();
+                    this.pedidosData = records;
                     this.mostrarPedidos(this.pedidosData);
                 } catch (err) {
                     console.error('Error cargando pedidos:', err);
-                    this.mostrarMensaje('crear', '❌ Error al sincronizar con Airtable', 'error');
+                    this.mostrarMensaje('crear', '❌ Error al sincronizar con Firebase', 'error');
                     this.pedidosData = [];
                 }
             },
@@ -1092,7 +1088,7 @@
                 }
                 
                 try {
-                    await airtablePut(this.pedidoEditando.id, {
+                    await firebasePut(this.pedidoEditando.id, {
                         status: this.pedidoEditando.status,
                         delivery_date: this.pedidoEditando.delivery_date,
                         delivery_person_name: this.pedidoEditando.delivery_person_name
