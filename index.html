@@ -40,6 +40,7 @@
         .login-card h1 {
             margin-bottom: 10px;
             color: #333;
+            font-size: 24px;
         }
 
         .login-card p {
@@ -51,181 +52,177 @@
             margin-bottom: 20px;
         }
 
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #333;
-        }
-
-        input, select, textarea {
+        .form-group input {
             width: 100%;
             padding: 12px;
-            border: 2px solid #ddd;
+            border: 1px solid #ddd;
             border-radius: 6px;
-            font-size: 16px;
-            transition: border-color 0.3s;
-            font-family: inherit;
+            font-size: 14px;
         }
 
-        input:focus, select:focus, textarea:focus {
+        .form-group input:focus {
             outline: none;
-            border-color: #1a1a1a;
+            border-color: #333;
         }
 
-        .btn-login {
+        .btn {
             width: 100%;
             padding: 12px;
             background: #1a1a1a;
             color: white;
-            border: 2px solid #1a1a1a;
+            border: none;
             border-radius: 6px;
-            font-size: 16px;
-            font-weight: 600;
+            font-size: 14px;
             cursor: pointer;
             transition: all 0.3s;
         }
 
-        .btn-login:hover {
+        .btn:hover {
             background: white;
             color: #1a1a1a;
+            border: 1px solid #1a1a1a;
         }
 
-        .login-error {
-            background: #f8d7da;
-            color: #721c24;
-            padding: 12px;
-            border-radius: 6px;
-            margin-bottom: 20px;
+        .error-message {
+            color: #d32f2f;
+            margin-top: 10px;
+            font-size: 12px;
             display: none;
         }
 
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-            overflow: hidden;
+        .app-screen {
             display: none;
         }
 
-        header {
+        .header {
             background: #1a1a1a;
             color: white;
-            padding: 30px;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .header-left h1 {
-            font-size: 28px;
+        .header-info {
+            flex: 1;
+        }
+
+        .header-info h2 {
+            font-size: 20px;
             margin-bottom: 5px;
         }
 
-        .header-right {
-            text-align: right;
-        }
-
-        .user-info {
-            background: rgba(255,255,255,0.2);
-            padding: 10px 15px;
-            border-radius: 6px;
-            font-size: 14px;
-        }
-
-        .user-info strong {
-            display: block;
+        .header-info p {
+            font-size: 12px;
+            opacity: 0.8;
         }
 
         .logout-btn {
-            background: #ff6b6b;
-            color: white;
+            background: white;
+            color: #1a1a1a;
             border: none;
-            padding: 8px 16px;
+            padding: 10px 20px;
             border-radius: 6px;
             cursor: pointer;
-            margin-top: 10px;
-            font-weight: 600;
+            font-size: 12px;
         }
 
-        .logout-btn:hover {
-            background: #ff5252;
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
         }
 
         .tabs {
             display: flex;
-            border-bottom: 2px solid #eee;
-            background: #f8f9fa;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ddd;
         }
 
-        .tab-button {
-            flex: 1;
-            padding: 15px;
+        .tab-btn {
+            padding: 12px 20px;
             background: none;
             border: none;
             cursor: pointer;
-            font-size: 16px;
-            font-weight: 600;
-            color: #666;
+            font-size: 14px;
             border-bottom: 3px solid transparent;
             transition: all 0.3s;
+            color: #666;
         }
 
-        .tab-button.active {
-            color: #1a1a1a;
+        .tab-btn.active {
             border-bottom-color: #1a1a1a;
-            background: white;
+            color: #1a1a1a;
+            font-weight: bold;
         }
 
-        .content {
+        .tab-content {
             display: none;
-            padding: 30px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
         }
 
-        .content.active {
+        .tab-content.active {
             display: block;
         }
 
         .form-section {
-            margin-bottom: 25px;
-            padding-bottom: 25px;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
             border-bottom: 1px solid #eee;
         }
 
         .form-section h3 {
-            font-size: 18px;
+            margin-bottom: 15px;
             color: #333;
+            font-size: 14px;
+        }
+
+        .form-group {
             margin-bottom: 15px;
         }
 
-        textarea {
-            resize: vertical;
-            min-height: 80px;
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 12px;
+            font-family: inherit;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #1a1a1a;
         }
 
         .checkbox-group {
             display: flex;
             align-items: center;
             gap: 10px;
-            padding: 12px;
-            background: #f8f9fa;
-            border-radius: 6px;
-            margin-bottom: 15px;
         }
 
-        input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
             cursor: pointer;
         }
 
         .cost-summary {
             background: #1a1a1a;
             color: white;
-            padding: 20px;
-            border-radius: 8px;
+            padding: 15px;
+            border-radius: 6px;
             margin: 20px 0;
         }
 
@@ -233,476 +230,341 @@
             display: flex;
             justify-content: space-between;
             margin-bottom: 10px;
-            font-size: 16px;
+            font-size: 12px;
         }
 
-        .cost-total {
-            border-top: 2px solid rgba(255, 255, 255, 0.5);
+        .cost-row.total {
+            border-top: 1px solid rgba(255,255,255,0.3);
             padding-top: 10px;
-            font-size: 20px;
             font-weight: bold;
-        }
-
-        button {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 6px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
+            font-size: 14px;
         }
 
         .btn-primary {
             background: #1a1a1a;
             color: white;
-            width: 100%;
-            padding: 15px;
-            font-size: 18px;
-            border: 2px solid #1a1a1a;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 20px;
         }
 
         .btn-primary:hover {
             background: white;
             color: #1a1a1a;
-            transform: none;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            border: 1px solid #1a1a1a;
         }
 
-        .btn-secondary {
-            background: #6c757d;
-            color: white;
-            margin-right: 10px;
-            padding: 8px 16px;
-            font-size: 14px;
-        }
-
-        .btn-warning {
-            background: #ff9800;
-            color: white;
-            padding: 8px 16px;
-            font-size: 14px;
-        }
-
-        .btn-success {
-            background: #28a745;
-            color: white;
-            padding: 8px 16px;
-            font-size: 14px;
-        }
-
-        .alert {
-            padding: 15px;
+        .message {
+            padding: 12px;
             border-radius: 6px;
             margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .alert-error {
-            background: #f8d7da;
-            border: 1px solid #f5c6cb;
-            color: #721c24;
-        }
-
-        .alert-success {
-            background: #d4edda;
-            border: 1px solid #c3e6cb;
-            color: #155724;
-        }
-
-        .table-responsive {
-            overflow-x: auto;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-        }
-
-        table thead {
-            background: #f8f9fa;
-            border-bottom: 2px solid #ddd;
-        }
-
-        table th {
-            padding: 12px;
-            text-align: left;
-            font-weight: 600;
-            color: #333;
-        }
-
-        table td {
-            padding: 12px;
-            border-bottom: 1px solid #eee;
-        }
-
-        table tbody tr:hover {
-            background: #f8f9fa;
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 6px 12px;
-            border-radius: 20px;
+            display: none;
             font-size: 12px;
-            font-weight: 600;
         }
 
-        .badge-primary {
-            background: #e7f3ff;
-            color: #0066cc;
+        .message.success {
+            background: #4caf50;
+            color: white;
+            display: block;
         }
 
-        .badge-warning {
-            background: #fff3cd;
-            color: #856404;
+        .message.error {
+            background: #f44336;
+            color: white;
+            display: block;
         }
 
-        .badge-success {
-            background: #d4edda;
-            color: #155724;
+        .pedidos-list {
+            display: grid;
+            gap: 15px;
         }
 
-        .badge-danger {
-            background: #f8d7da;
-            color: #721c24;
+        .pedido-card {
+            background: #f9f9f9;
+            border-left: 4px solid #1a1a1a;
+            padding: 15px;
+            border-radius: 6px;
+            font-size: 12px;
+        }
+
+        .pedido-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .pedido-card-header h4 {
+            color: #333;
+            font-size: 14px;
+        }
+
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .status-badge.registrado {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .status-badge.confirmado {
+            background: #c8e6c9;
+            color: #388e3c;
+        }
+
+        .pedido-detail {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .pedido-detail span {
+            color: #666;
+        }
+
+        .pedido-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            background: #1a1a1a;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 11px;
+        }
+
+        .btn-small:hover {
+            background: #333;
         }
 
         .modal {
             display: none;
             position: fixed;
-            top: 0;
+            z-index: 1000;
             left: 0;
+            top: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
+            background-color: rgba(0,0,0,0.5);
         }
 
         .modal.active {
             display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .modal-content {
-            background: white;
+            background-color: white;
             padding: 30px;
             border-radius: 12px;
-            max-width: 600px;
             width: 90%;
+            max-width: 500px;
             max-height: 90vh;
             overflow-y: auto;
         }
 
         .modal-header {
-            font-size: 20px;
-            font-weight: bold;
-            margin-bottom: 20px;
-            color: #333;
-            border-bottom: 2px solid #eee;
-            padding-bottom: 10px;
-        }
-
-        .modal-footer {
             display: flex;
-            gap: 10px;
-            justify-content: flex-end;
-            margin-top: 20px;
-            border-top: 2px solid #eee;
-            padding-top: 20px;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
         }
 
-        .hidden {
-            display: none;
+        .modal-header h3 {
+            margin: 0;
+            color: #333;
         }
 
-        .grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-
-        .search-population {
-            position: relative;
-        }
-
-        .search-population input {
-            width: 100%;
-        }
-
-        .search-results {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background: white;
-            border: 2px solid #ddd;
-            border-top: none;
-            max-height: 300px;
-            overflow-y: auto;
-            display: none;
-            z-index: 100;
-        }
-
-        .search-results.active {
-            display: block;
-        }
-
-        .search-result-item {
-            padding: 12px;
-            border-bottom: 1px solid #eee;
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 24px;
             cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .search-result-item:hover {
-            background: #f8f9fa;
-        }
-
-        @media (max-width: 768px) {
-            .grid {
-                grid-template-columns: 1fr;
-            }
-            header {
-                flex-direction: column;
-                text-align: center;
-            }
-            .header-right {
-                margin-top: 20px;
-            }
+            color: #666;
         }
     </style>
 </head>
 <body>
-    <!-- PANTALLA DE LOGIN -->
+    <!-- Login Screen -->
     <div id="login-screen" class="login-screen">
         <div class="login-card">
-            <h1>📦 Maisons du Monde</h1>
-            <p>Sistema de Gestión de Entregas</p>
-            
-            <div class="login-error" id="login-error"></div>
-            
+            <h1>Maisons du Monde</h1>
+            <p>Gestión de Entregas</p>
             <div class="form-group">
-                <label for="employee-id">Número de Empleado</label>
-                <input type="text" id="employee-id" placeholder="Ingresa tu número" autocomplete="off">
+                <input type="text" id="employee-id" placeholder="Número de empleado" />
             </div>
-
-            <button class="btn-login" onclick="app.login()">Acceder</button>
+            <button class="btn" onclick="app.login()">INICIAR SESIÓN</button>
+            <div id="login-error" class="error-message"></div>
         </div>
     </div>
 
-    <!-- APLICACIÓN PRINCIPAL -->
-    <div id="app-screen" class="container">
-        <header>
-            <div class="header-left">
-                <h1>📦 Maisons du Monde</h1>
-                <p>Sistema de Gestión de Entregas</p>
-            </div>
-            <div class="header-right">
-                <div class="user-info">
-                    <strong id="user-name">-</strong>
-                    <span id="user-id">-</span>
-                    <button class="logout-btn" onclick="app.logout()">Logout</button>
+    <!-- App Screen -->
+    <div id="app-screen" class="app-screen">
+        <div class="container">
+            <div class="header">
+                <div class="header-info">
+                    <h2 id="user-name">Usuario</h2>
+                    <p id="user-id">ID</p>
                 </div>
+                <button class="logout-btn" onclick="app.logout()">Cerrar Sesión</button>
             </div>
-        </header>
 
-        <div class="tabs">
-            <button class="tab-button active" onclick="app.switchTab('crear')">➕ Crear Pedido</button>
-            <button class="tab-button" onclick="app.switchTab('listar')">📋 Ver Pedidos</button>
+            <div class="tabs">
+                <button class="tab-btn active" onclick="app.switchTab('crear')">Crear Pedido</button>
+                <button class="tab-btn" onclick="app.switchTab('pedidos')">Ver Pedidos</button>
+            </div>
+
+            <!-- Tab: Crear Pedido -->
+            <div id="crear-tab" class="tab-content active">
+                <div id="create-message" class="message"></div>
+                
+                <div class="form-section">
+                    <h3>Datos de Factura</h3>
+                    <div class="form-group">
+                        <label>Número de Factura *</label>
+                        <input type="text" id="invoice" placeholder="FAC001" />
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>Datos del Cliente</h3>
+                    <div class="form-group">
+                        <label>Nombre del Cliente *</label>
+                        <input type="text" id="customer-name" />
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="customer-email" />
+                    </div>
+                    <div class="form-group">
+                        <label>Teléfono</label>
+                        <input type="tel" id="customer-phone" />
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>Datos del Representante</h3>
+                    <div class="form-group">
+                        <label>Nombre</label>
+                        <input type="text" id="representative-name" />
+                    </div>
+                    <div class="form-group">
+                        <label>Teléfono</label>
+                        <input type="tel" id="representative-phone" />
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>Domicilio de Entrega</h3>
+                    <div class="form-group">
+                        <label>Dirección *</label>
+                        <input type="text" id="address" />
+                    </div>
+                    <div class="form-group">
+                        <label>Población *</label>
+                        <select id="population"></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Referencias</label>
+                        <textarea id="references" rows="3"></textarea>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>Logística</h3>
+                    <div class="form-group">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="needs-assembly" onchange="app.actualizarCostes()" />
+                            <label for="needs-assembly">Requiere Montaje</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="has-furniture" onchange="app.actualizarCostes()" />
+                            <label for="has-furniture">Lleva Mueble</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Observaciones</label>
+                        <textarea id="observations" rows="3"></textarea>
+                    </div>
+                </div>
+
+                <div class="cost-summary">
+                    <div class="cost-row">
+                        <span>Porte:</span>
+                        <span id="shipping-cost">0.00€</span>
+                    </div>
+                    <div class="cost-row">
+                        <span>Montaje:</span>
+                        <span id="assembly-cost">0.00€</span>
+                    </div>
+                    <div class="cost-row total">
+                        <span>TOTAL:</span>
+                        <span id="total-cost">0.00€</span>
+                    </div>
+                </div>
+
+                <button class="btn-primary" onclick="app.crearPedido()">CREAR PEDIDO</button>
+            </div>
+
+            <!-- Tab: Ver Pedidos -->
+            <div id="pedidos-tab" class="tab-content">
+                <button class="btn-primary" onclick="app.cargarPedidos()">Recargar Pedidos</button>
+                <div id="pedidos-list" class="pedidos-list" style="margin-top: 20px;"></div>
+            </div>
         </div>
+    </div>
 
-        <!-- TAB 1: CREAR PEDIDO -->
-        <div id="crear" class="content active">
-            <div id="mensaje-crear"></div>
-
-            <div class="form-section">
-                <h3>📄 Factura</h3>
-                <div class="form-group">
-                    <label for="invoice">Número de Factura *</label>
-                    <input type="text" id="invoice" placeholder="Ej: FAC2024001" required>
-                </div>
+    <!-- Modal Editar -->
+    <div id="edit-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Editar Pedido</h3>
+                <button class="close-modal" onclick="app.cerrarModalEditar()">×</button>
             </div>
-
-            <div class="form-section">
-                <h3>👤 Datos del Cliente</h3>
-                <div class="grid">
-                    <div class="form-group">
-                        <label for="customer-name">Nombre Completo *</label>
-                        <input type="text" id="customer-name" placeholder="Ej: Juan García" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="customer-email">Email</label>
-                        <input type="email" id="customer-email" placeholder="Ej: juan@email.com">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="customer-phone">Teléfono</label>
-                    <input type="tel" id="customer-phone" placeholder="Ej: +376 123456">
-                </div>
-            </div>
-
-            <div class="form-section">
-                <h3>👥 Representante (si no es el cliente)</h3>
-                <p style="font-size: 13px; color: #666; margin-bottom: 15px;">Datos de la persona que recibirá el pedido en caso de que no sea el cliente</p>
-                <div class="grid">
-                    <div class="form-group">
-                        <label for="representative-name">Nombre del Representante</label>
-                        <input type="text" id="representative-name" placeholder="Ej: María García">
-                    </div>
-                    <div class="form-group">
-                        <label for="representative-phone">Teléfono del Representante</label>
-                        <input type="tel" id="representative-phone" placeholder="Ej: +376 654321">
-                    </div>
-                </div>
-            </div>
-
-            <div class="form-section">
-                <h3>🏠 Domicilio</h3>
-                <div class="form-group">
-                    <label for="address">Calle y Número *</label>
-                    <input type="text" id="address" placeholder="Ej: Carrer de la Pau, 5" required>
-                </div>
-                <div class="grid">
-                    <div class="form-group search-population">
-                        <label for="population-search">Población *</label>
-                        <input type="text" id="population-search" placeholder="Busca población..." required>
-                        <div class="search-results" id="search-results"></div>
-                    </div>
-                    <div class="form-group">
-                        <label>Zona</label>
-                        <input type="text" id="zone" disabled style="background: #f0f0f0;">
-                    </div>
-                </div>
-            </div>
-
-            <div class="form-section">
-                <h3>🏷️ Referencias</h3>
-                <div class="form-group">
-                    <label for="references">Referencias de Productos</label>
-                    <textarea id="references" placeholder="Ej: REF001, REF002, REF003&#10;O pega la lista de referencias..."></textarea>
-                </div>
-            </div>
-
-            <div class="form-section">
-                <h3>📦 Logística</h3>
-                <div class="checkbox-group">
-                    <input type="checkbox" id="has-furniture" onchange="app.toggleFurniture()">
-                    <label for="has-furniture">¿Lleva mueble?</label>
-                </div>
-
-                <div class="checkbox-group">
-                    <input type="checkbox" id="needs-assembly" onchange="app.toggleAssembly()">
-                    <label for="needs-assembly">¿Necesita montaje/ensamblaje?</label>
-                </div>
-
-                <div id="assembly-time-group" class="hidden form-group">
-                    <label for="assembly-time">Tiempo de montaje</label>
-                    <select id="assembly-time">
-                        <option value="15">15 minutos</option>
-                        <option value="30">30 minutos</option>
-                        <option value="45">45 minutos</option>
-                        <option value="60">60 minutos</option>
-                        <option value="75">75 minutos</option>
-                        <option value="90">90 minutos</option>
-                    </select>
-                </div>
-
-                <div class="checkbox-group">
-                    <input type="checkbox" id="has-elevator">
-                    <label for="has-elevator">¿Vivienda con ascensor?</label>
-                </div>
-
-                <div class="form-group">
-                    <label for="observations">Observaciones</label>
-                    <textarea id="observations" placeholder="Ej: 4ª planta, no tocar timbre, dejar en porche..."></textarea>
-                </div>
-            </div>
-
-            <div class="cost-summary">
-                <div class="cost-row">
-                    <span>Porte de envío:</span>
-                    <span id="cost-shipping">0.00€</span>
-                </div>
-                <div class="cost-row" id="cost-assembly-row" style="display: none;">
-                    <span>Montaje/ensamblaje:</span>
-                    <span id="cost-assembly">0.00€</span>
-                </div>
-                <div class="cost-row cost-total">
-                    <span>TOTAL:</span>
-                    <span id="cost-total">0.00€</span>
-                </div>
-            </div>
-
-            <button class="btn-primary" onclick="app.crearPedido()">✅ CREAR PEDIDO</button>
-        </div>
-
-        <!-- TAB 2: LISTAR PEDIDOS -->
-        <div id="listar" class="content">
-            <h3 style="margin-bottom: 20px;">📋 Pedidos Registrados</h3>
-            
-            <div class="grid" style="margin-bottom: 20px;">
-                <input type="text" id="filtro-cliente" placeholder="🔍 Buscar cliente o factura..." onkeyup="app.filtrarPedidos()">
-                <select id="filtro-estado" onchange="app.filtrarPedidos()">
-                    <option value="">Todos los estados</option>
+            <div class="form-group">
+                <label>Estado</label>
+                <select id="edit-status">
                     <option value="registrado">Registrado</option>
                     <option value="confirmado">Confirmado</option>
-                    <option value="en_reparto">En Reparto</option>
-                    <option value="entregado">Entregado</option>
-                    <option value="no_disponible">No Disponible</option>
                 </select>
             </div>
-
-            <div class="table-responsive" id="tabla-pedidos"></div>
-        </div>
-    </div>
-
-    <!-- MODAL: DETALLES -->
-    <div id="modal-pedido" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">Detalles del Pedido</div>
-            <div id="modal-body"></div>
-            <div class="modal-footer">
-                <button class="btn-secondary" onclick="app.cerrarModal()">Cerrar</button>
+            <div class="form-group">
+                <label>Fecha de Entrega</label>
+                <input type="date" id="edit-delivery-date" />
             </div>
-        </div>
-    </div>
-
-    <!-- MODAL: EDITAR PEDIDO -->
-    <div id="modal-editar" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">Editar Pedido</div>
-            <div id="modal-editar-body"></div>
-            <div class="modal-footer">
-                <button class="btn-secondary" onclick="app.cerrarModalEditar()">Cancelar</button>
-                <button class="btn-primary" onclick="app.guardarPedidoEditado()">Guardar Cambios</button>
+            <div class="form-group">
+                <label>Persona de Entrega</label>
+                <input type="text" id="edit-delivery-person" />
             </div>
+            <button class="btn-primary" onclick="app.guardarPedidoEditado()">Guardar Cambios</button>
         </div>
     </div>
 
     <script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js"></script>
-    <script>
-        // Configuración Firebase
-        const firebaseConfig = {
-            databaseURL: 'https://maisons-delivery-default-rtdb.europe-west1.firebasedatabase.app/'
-        };
+        // Firebase REST API
+        const FIREBASE_DB_URL = 'https://maisons-delivery-default-rtdb.europe-west1.firebasedatabase.app/pedidos';
 
-        // Inicializar Firebase
-        firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
-
-        // Funciones Firebase
         async function firebaseGet() {
             try {
-                const snapshot = await database.ref('pedidos').get();
-                if (snapshot.exists()) {
-                    const data = snapshot.val();
+                const response = await fetch(FIREBASE_DB_URL + '.json');
+                const data = await response.json();
+                if (data) {
                     return Object.keys(data).map(key => ({
                         id: key,
                         ...data[key]
@@ -717,9 +579,13 @@
 
         async function firebasePost(pedidoData) {
             try {
-                const newRef = database.ref('pedidos').push();
-                await newRef.set(pedidoData);
-                return { id: newRef.key, ...pedidoData };
+                const response = await fetch(FIREBASE_DB_URL + '.json', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(pedidoData)
+                });
+                const data = await response.json();
+                return { id: data.name, ...pedidoData };
             } catch (error) {
                 console.error('Error Firebase POST:', error);
                 throw error;
@@ -728,8 +594,12 @@
 
         async function firebasePut(id, updateData) {
             try {
-                await database.ref(`pedidos/${id}`).update(updateData);
-                return { id, ...updateData };
+                const response = await fetch(FIREBASE_DB_URL + '/' + id + '.json', {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(updateData)
+                });
+                return await response.json();
             } catch (error) {
                 console.error('Error Firebase PUT:', error);
                 throw error;
@@ -745,60 +615,11 @@
         };
 
         const POBLACIONES = [
-            { id: 1, name: 'Escaldes - Escaldes', zone: 'Z1', shipping_cost: 10, assembly_cost: 15, shipping_cost_furniture: 15 },
-            { id: 2, name: 'Escaldes - Engordany', zone: 'Z1', shipping_cost: 10, assembly_cost: 15, shipping_cost_furniture: 15 },
-            { id: 3, name: 'Escaldes - Els Vilars', zone: 'Z1', shipping_cost: 10, assembly_cost: 15, shipping_cost_furniture: 15 },
-            { id: 4, name: 'Andorra la Vella - Andorra la Vella', zone: 'Z1', shipping_cost: 10, assembly_cost: 15, shipping_cost_furniture: 15 },
-            { id: 5, name: 'Andorra la Vella - Santa Coloma', zone: 'Z1', shipping_cost: 10, assembly_cost: 15, shipping_cost_furniture: 15 },
-            { id: 6, name: 'Andorra la Vella - La Margineda', zone: 'Z1', shipping_cost: 10, assembly_cost: 15, shipping_cost_furniture: 15 },
-            { id: 7, name: 'Escaldes - Engolasters', zone: 'Z2', shipping_cost: 15, assembly_cost: 25, shipping_cost_furniture: 25 },
-            { id: 8, name: 'Encamp - Encamp', zone: 'Z2', shipping_cost: 15, assembly_cost: 25, shipping_cost_furniture: 25 },
-            { id: 9, name: 'Encamp - Vila', zone: 'Z2', shipping_cost: 15, assembly_cost: 25, shipping_cost_furniture: 25 },
-            { id: 10, name: 'Encamp - Les Bons', zone: 'Z2', shipping_cost: 15, assembly_cost: 25, shipping_cost_furniture: 25 },
-            { id: 11, name: 'Encamp - La Mosquera', zone: 'Z2', shipping_cost: 15, assembly_cost: 25, shipping_cost_furniture: 25 },
-            { id: 12, name: 'Sant Julià de Lòria - Sant Julià de Lòria (nucli)', zone: 'Z2', shipping_cost: 15, assembly_cost: 25, shipping_cost_furniture: 25 },
-            { id: 13, name: 'La Massana - La Massana', zone: 'Z2', shipping_cost: 15, assembly_cost: 25, shipping_cost_furniture: 25 },
-            { id: 14, name: 'La Massana - Anyós', zone: 'Z2', shipping_cost: 15, assembly_cost: 25, shipping_cost_furniture: 25 },
-            { id: 15, name: 'La Massana - Sispony', zone: 'Z2', shipping_cost: 15, assembly_cost: 25, shipping_cost_furniture: 25 },
-            { id: 16, name: 'La Massana - L\'Aldosa', zone: 'Z2', shipping_cost: 15, assembly_cost: 25, shipping_cost_furniture: 25 },
-            { id: 17, name: 'La Massana - Escàs', zone: 'Z2', shipping_cost: 15, assembly_cost: 25, shipping_cost_furniture: 25 },
-            { id: 18, name: 'Ordino - Ordino', zone: 'Z2', shipping_cost: 15, assembly_cost: 25, shipping_cost_furniture: 25 },
-            { id: 19, name: 'Ordino - Segudet', zone: 'Z2', shipping_cost: 15, assembly_cost: 25, shipping_cost_furniture: 25 },
-            { id: 20, name: 'Ordino - Sornàs', zone: 'Z2', shipping_cost: 15, assembly_cost: 25, shipping_cost_furniture: 25 },
-            { id: 21, name: 'Ordino - Ansalonga', zone: 'Z2', shipping_cost: 15, assembly_cost: 25, shipping_cost_furniture: 25 },
-            { id: 22, name: 'Canillo - Canillo', zone: 'Z3', shipping_cost: 20, assembly_cost: 35, shipping_cost_furniture: 35 },
-            { id: 23, name: 'Canillo - El Forn', zone: 'Z3', shipping_cost: 20, assembly_cost: 35, shipping_cost_furniture: 35 },
-            { id: 24, name: 'Canillo - El Vilar', zone: 'Z3', shipping_cost: 20, assembly_cost: 35, shipping_cost_furniture: 35 },
-            { id: 25, name: 'Canillo - L\'Armiana', zone: 'Z3', shipping_cost: 20, assembly_cost: 35, shipping_cost_furniture: 35 },
-            { id: 26, name: 'Canillo - Meritxell', zone: 'Z3', shipping_cost: 20, assembly_cost: 35, shipping_cost_furniture: 35 },
-            { id: 27, name: 'Canillo - Els Plans', zone: 'Z3', shipping_cost: 20, assembly_cost: 35, shipping_cost_furniture: 35 },
-            { id: 28, name: 'Canillo - Prats', zone: 'Z3', shipping_cost: 20, assembly_cost: 35, shipping_cost_furniture: 35 },
-            { id: 29, name: 'Canillo - Ransol', zone: 'Z3', shipping_cost: 20, assembly_cost: 35, shipping_cost_furniture: 35 },
-            { id: 30, name: 'Canillo - El Tarter', zone: 'Z3', shipping_cost: 20, assembly_cost: 35, shipping_cost_furniture: 35 },
-            { id: 31, name: 'Canillo - Incles', zone: 'Z3', shipping_cost: 20, assembly_cost: 35, shipping_cost_furniture: 35 },
-            { id: 32, name: 'Canillo - Soldeu', zone: 'Z3', shipping_cost: 20, assembly_cost: 35, shipping_cost_furniture: 35 },
-            { id: 33, name: 'Canillo - Bordes d\'Envalira', zone: 'Z3', shipping_cost: 20, assembly_cost: 35, shipping_cost_furniture: 35 },
-            { id: 34, name: 'La Massana - Arinsal', zone: 'Z3', shipping_cost: 20, assembly_cost: 35, shipping_cost_furniture: 35 },
-            { id: 35, name: 'La Massana - Erts', zone: 'Z3', shipping_cost: 20, assembly_cost: 35, shipping_cost_furniture: 35 },
-            { id: 36, name: 'La Massana - Xixerella', zone: 'Z3', shipping_cost: 20, assembly_cost: 35, shipping_cost_furniture: 35 },
-            { id: 37, name: 'La Massana - Pal', zone: 'Z3', shipping_cost: 20, assembly_cost: 35, shipping_cost_furniture: 35 },
-            { id: 38, name: 'Ordino - La Cortinada', zone: 'Z3', shipping_cost: 20, assembly_cost: 35, shipping_cost_furniture: 35 },
-            { id: 39, name: 'Ordino - Arans', zone: 'Z3', shipping_cost: 20, assembly_cost: 35, shipping_cost_furniture: 35 },
-            { id: 40, name: 'Ordino - Llorts', zone: 'Z3', shipping_cost: 20, assembly_cost: 35, shipping_cost_furniture: 35 },
-            { id: 41, name: 'Ordino - El Serrat', zone: 'Z3', shipping_cost: 20, assembly_cost: 35, shipping_cost_furniture: 35 },
-            { id: 42, name: 'Sant Julià de Lòria - Aixirivall', zone: 'Z4', shipping_cost: 40, assembly_cost: 70, shipping_cost_furniture: 70 },
-            { id: 43, name: 'Sant Julià de Lòria - Nagol', zone: 'Z4', shipping_cost: 40, assembly_cost: 70, shipping_cost_furniture: 70 },
-            { id: 44, name: 'Sant Julià de Lòria - Certers', zone: 'Z4', shipping_cost: 40, assembly_cost: 70, shipping_cost_furniture: 70 },
-            { id: 45, name: 'Sant Julià de Lòria - Llumeneres', zone: 'Z4', shipping_cost: 40, assembly_cost: 70, shipping_cost_furniture: 70 },
-            { id: 46, name: 'Sant Julià de Lòria - Auvinyà', zone: 'Z4', shipping_cost: 40, assembly_cost: 70, shipping_cost_furniture: 70 },
-            { id: 47, name: 'Sant Julià de Lòria - Juberri', zone: 'Z4', shipping_cost: 40, assembly_cost: 70, shipping_cost_furniture: 70 },
-            { id: 48, name: 'Sant Julià de Lòria - Fontaneda', zone: 'Z4', shipping_cost: 40, assembly_cost: 70, shipping_cost_furniture: 70 },
-            { id: 49, name: 'Sant Julià de Lòria - Bixessarri', zone: 'Z4', shipping_cost: 40, assembly_cost: 70, shipping_cost_furniture: 70 },
-            { id: 50, name: 'Sant Julià de Lòria - Aixàs', zone: 'Z4', shipping_cost: 40, assembly_cost: 70, shipping_cost_furniture: 70 },
-            { id: 51, name: 'Sant Julià de Lòria - Canòlich', zone: 'Z4', shipping_cost: 40, assembly_cost: 70, shipping_cost_furniture: 70 },
-            { id: 52, name: 'Encamp - Els Cortals d\'Encamp', zone: 'Z4', shipping_cost: 40, assembly_cost: 70, shipping_cost_furniture: 70 },
-            { id: 53, name: 'Encamp - Pas de la Casa', zone: 'Z4', shipping_cost: 40, assembly_cost: 70, shipping_cost_furniture: 70 },
-            { id: 54, name: 'Encamp - Grau Roig', zone: 'Z4', shipping_cost: 40, assembly_cost: 70, shipping_cost_furniture: 70 }
+            { id: 1, name: 'Andorra la Vella', zone: 'Z1', shipping_cost: 10, assembly_cost: 5, shipping_cost_furniture: 15 },
+            { id: 2, name: 'Escaldes-Engordany', zone: 'Z1', shipping_cost: 10, assembly_cost: 5, shipping_cost_furniture: 15 },
+            { id: 3, name: 'La Massana', zone: 'Z2', shipping_cost: 15, assembly_cost: 8, shipping_cost_furniture: 25 },
+            { id: 4, name: 'Ordino', zone: 'Z3', shipping_cost: 20, assembly_cost: 10, shipping_cost_furniture: 35 },
+            { id: 5, name: 'Canillo', zone: 'Z4', shipping_cost: 40, assembly_cost: 15, shipping_cost_furniture: 70 }
         ];
 
         const app = {
@@ -807,14 +628,16 @@
             populacionSeleccionada: null,
             pedidoEditando: null,
 
-            login: async function() {
+            login: function() {
                 const employeeId = document.getElementById('employee-id').value.trim();
                 if (!employeeId) {
-                    this.mostrarLoginError('Ingresa tu número de empleado');
+                    document.getElementById('login-error').textContent = 'Ingresa tu número de empleado';
+                    document.getElementById('login-error').style.display = 'block';
                     return;
                 }
                 if (!EMPLEADOS[employeeId]) {
-                    this.mostrarLoginError('Número de empleado no válido');
+                    document.getElementById('login-error').textContent = 'Número de empleado no válido';
+                    document.getElementById('login-error').style.display = 'block';
                     return;
                 }
                 this.currentUser = { id: employeeId, name: EMPLEADOS[employeeId] };
@@ -822,87 +645,68 @@
                 document.getElementById('app-screen').style.display = 'block';
                 document.getElementById('user-name').textContent = this.currentUser.name;
                 document.getElementById('user-id').textContent = `(${this.currentUser.id})`;
-                await this.init();
+                this.init();
             },
 
             logout: function() {
                 this.currentUser = null;
-                document.getElementById('app-screen').style.display = 'none';
+                this.pedidosData = [];
                 document.getElementById('login-screen').style.display = 'flex';
+                document.getElementById('app-screen').style.display = 'none';
                 document.getElementById('employee-id').value = '';
+                document.getElementById('login-error').style.display = 'none';
             },
 
-            mostrarLoginError: function(msg) {
-                const error = document.getElementById('login-error');
-                error.textContent = msg;
-                error.style.display = 'flex';
-                setTimeout(() => { error.style.display = 'none'; }, 5000);
-            },
-
-            init: async function() {
+            init: function() {
                 this.cargarPoblaciones();
-                await this.cargarPedidos();
+                this.cargarPedidos();
             },
 
             cargarPoblaciones: function() {
-                const searchInput = document.getElementById('population-search');
-                searchInput.addEventListener('input', (e) => this.buscarPoblaciones(e.target.value));
-                searchInput.addEventListener('focus', () => {
-                    if (searchInput.value) this.buscarPoblaciones(searchInput.value);
+                const select = document.getElementById('population');
+                select.innerHTML = '<option value="">-- Selecciona población --</option>';
+                POBLACIONES.forEach(p => {
+                    const option = document.createElement('option');
+                    option.value = p.id;
+                    option.textContent = p.name;
+                    option.dataset.zone = p.zone;
+                    option.dataset.shipping = p.shipping_cost;
+                    option.dataset.assembly = p.assembly_cost;
+                    option.dataset.shippingFurniture = p.shipping_cost_furniture;
+                    select.appendChild(option);
                 });
+                select.onchange = () => this.seleccionarPoblacion();
             },
 
-            buscarPoblaciones: function(texto) {
-                const resultados = document.getElementById('search-results');
-                if (!texto.trim()) {
-                    resultados.classList.remove('active');
+            seleccionarPoblacion: function() {
+                const select = document.getElementById('population');
+                const index = select.selectedIndex;
+                if (index === 0) {
+                    this.populacionSeleccionada = null;
                     return;
                 }
-                const filtrados = POBLACIONES.filter(p => p.name.toLowerCase().includes(texto.toLowerCase()));
-                resultados.innerHTML = filtrados.map(p => `
-                    <div class="search-result-item" onclick="app.seleccionarPoblacion(${p.id}, '${p.name}', '${p.zone}', ${p.shipping_cost}, ${p.assembly_cost}, ${p.shipping_cost_furniture})">
-                        ${p.name} (${p.zone})
-                    </div>
-                `).join('');
-                resultados.classList.add('active');
-            },
-
-            seleccionarPoblacion: function(id, name, zone, shipping, assembly, shippingFurniture) {
-                document.getElementById('population-search').value = name;
-                document.getElementById('zone').value = zone;
-                this.populacionSeleccionada = { id, name, zone, shipping_cost: shipping, assembly_cost: assembly, shipping_cost_furniture: shippingFurniture };
-                document.getElementById('search-results').classList.remove('active');
+                const option = select.options[index];
+                this.populacionSeleccionada = {
+                    id: parseInt(option.value),
+                    name: option.textContent,
+                    zone: option.dataset.zone,
+                    shipping_cost: parseFloat(option.dataset.shipping),
+                    assembly_cost: parseFloat(option.dataset.assembly),
+                    shipping_cost_furniture: parseFloat(option.dataset.shippingFurniture)
+                };
                 this.actualizarCostes();
             },
 
             actualizarCostes: function() {
                 if (!this.populacionSeleccionada) return;
-                
-                // Determinar tarifa de envío según si lleva mueble
                 const hasFurniture = document.getElementById('has-furniture').checked;
-                const shipping = hasFurniture ? this.populacionSeleccionada.shipping_cost_furniture : this.populacionSeleccionada.shipping_cost;
-                
-                let assembly = 0;
-                if (document.getElementById('needs-assembly').checked) {
-                    assembly = this.populacionSeleccionada.assembly_cost;
-                    document.getElementById('cost-assembly-row').style.display = 'flex';
-                    document.getElementById('cost-assembly').textContent = assembly.toFixed(2) + '€';
-                } else {
-                    document.getElementById('cost-assembly-row').style.display = 'none';
-                }
-                document.getElementById('cost-shipping').textContent = shipping.toFixed(2) + '€';
-                document.getElementById('cost-total').textContent = (shipping + assembly).toFixed(2) + '€';
-            },
-
-            toggleFurniture: function() {
-                // Recalcular costes cuando se marca/desmarca "Lleva mueble"
-                this.actualizarCostes();
-            },
-
-            toggleAssembly: function() {
-                const checked = document.getElementById('needs-assembly').checked;
-                document.getElementById('assembly-time-group').classList.toggle('hidden', !checked);
-                this.actualizarCostes();
+                const needsAssembly = document.getElementById('needs-assembly').checked;
+                const shippingCost = hasFurniture ? this.populacionSeleccionada.shipping_cost_furniture : this.populacionSeleccionada.shipping_cost;
+                const assemblyCost = needsAssembly ? this.populacionSeleccionada.assembly_cost : 0;
+                const total = shippingCost + assemblyCost;
+                document.getElementById('shipping-cost').textContent = shippingCost.toFixed(2) + '€';
+                document.getElementById('assembly-cost').textContent = assemblyCost.toFixed(2) + '€';
+                document.getElementById('total-cost').textContent = total.toFixed(2) + '€';
             },
 
             crearPedido: async function() {
@@ -916,11 +720,12 @@
                 const references = document.getElementById('references').value.trim();
                 const needsAssembly = document.getElementById('needs-assembly').checked;
                 const hasFurniture = document.getElementById('has-furniture').checked;
+                const observations = document.getElementById('observations').value.trim();
 
-                if (!invoice) return this.mostrarMensaje('crear', 'Número de factura obligatorio', 'error');
-                if (!customerName) return this.mostrarMensaje('crear', 'Nombre del cliente obligatorio', 'error');
-                if (!address) return this.mostrarMensaje('crear', 'Dirección obligatoria', 'error');
-                if (!this.populacionSeleccionada) return this.mostrarMensaje('crear', 'Población obligatoria', 'error');
+                if (!invoice || !customerName || !address || !this.populacionSeleccionada) {
+                    this.mostrarMensaje('create-message', 'Completa todos los campos obligatorios', 'error');
+                    return;
+                }
 
                 const shippingCost = hasFurniture ? this.populacionSeleccionada.shipping_cost_furniture : this.populacionSeleccionada.shipping_cost;
                 const assemblyCost = needsAssembly ? this.populacionSeleccionada.assembly_cost : 0;
@@ -938,21 +743,118 @@
                     assembly_cost: assemblyCost,
                     needs_assembly: needsAssembly,
                     has_furniture: hasFurniture,
+                    observations: observations || '',
                     status: 'registrado',
-                    created_at: new Date().toISOString()
+                    created_at: new Date().toISOString(),
+                    created_by: this.currentUser.id
                 };
 
                 try {
                     await firebasePost(pedidoData);
-                    this.mostrarMensaje('crear', `✅ Pedido creado: ${invoice}`, 'success');
-                    this.limpiarFormularioPedido();
+                    this.mostrarMensaje('create-message', `✅ Pedido creado: ${invoice}`, 'success');
+                    this.limpiarFormulario();
                     await this.cargarPedidos();
-                } catch (err) {
-                    this.mostrarMensaje('crear', `❌ Error: ${err.message}`, 'error');
+                } catch (error) {
+                    this.mostrarMensaje('create-message', '❌ Error al crear pedido: ' + error.message, 'error');
                 }
             },
 
-            limpiarFormularioPedido: function() {
+            cargarPedidos: async function() {
+                try {
+                    const records = await firebaseGet();
+                    this.pedidosData = records;
+                    this.mostrarPedidos();
+                } catch (error) {
+                    console.error('Error cargando pedidos:', error);
+                }
+            },
+
+            mostrarPedidos: function() {
+                const list = document.getElementById('pedidos-list');
+                if (this.pedidosData.length === 0) {
+                    list.innerHTML = '<p>No hay pedidos</p>';
+                    return;
+                }
+                list.innerHTML = this.pedidosData.map(p => `
+                    <div class="pedido-card">
+                        <div class="pedido-card-header">
+                            <h4>${p.invoice_number}</h4>
+                            <span class="status-badge ${p.status}">${p.status}</span>
+                        </div>
+                        <div class="pedido-detail">
+                            <span><strong>Cliente:</strong> ${p.customer_name}</span>
+                            <span><strong>Teléfono:</strong> ${p.customer_phone}</span>
+                            <span><strong>Dirección:</strong> ${p.address}</span>
+                            <span><strong>Porte:</strong> ${p.shipping_cost}€</span>
+                        </div>
+                        <div class="pedido-actions">
+                            <button class="btn-small" onclick="app.abrirModalEditar('${p.id}')">Editar</button>
+                            <button class="btn-small" onclick="app.descargarAlbaran('${p.id}')">Albarán</button>
+                        </div>
+                    </div>
+                `).join('');
+            },
+
+            abrirModalEditar: function(id) {
+                const pedido = this.pedidosData.find(p => p.id === id);
+                if (!pedido) return;
+                this.pedidoEditando = pedido;
+                document.getElementById('edit-status').value = pedido.status || 'registrado';
+                document.getElementById('edit-delivery-date').value = pedido.delivery_date || '';
+                document.getElementById('edit-delivery-person').value = pedido.delivery_person_name || '';
+                document.getElementById('edit-modal').classList.add('active');
+            },
+
+            cerrarModalEditar: function() {
+                document.getElementById('edit-modal').classList.remove('active');
+                this.pedidoEditando = null;
+            },
+
+            guardarPedidoEditado: async function() {
+                if (!this.pedidoEditando) return;
+                const status = document.getElementById('edit-status').value;
+                const deliveryDate = document.getElementById('edit-delivery-date').value;
+                const deliveryPerson = document.getElementById('edit-delivery-person').value;
+
+                try {
+                    await firebasePut(this.pedidoEditando.id, {
+                        status: status,
+                        delivery_date: deliveryDate,
+                        delivery_person_name: deliveryPerson
+                    });
+                    await this.cargarPedidos();
+                    this.cerrarModalEditar();
+                    alert('✅ Pedido actualizado');
+                } catch (error) {
+                    alert('❌ Error: ' + error.message);
+                }
+            },
+
+            descargarAlbaran: function(id) {
+                const pedido = this.pedidosData.find(p => p.id === id);
+                if (!pedido) return;
+                const element = document.createElement('div');
+                element.innerHTML = `
+                    <h2>${pedido.invoice_number}</h2>
+                    <p><strong>Cliente:</strong> ${pedido.customer_name}</p>
+                    <p><strong>Teléfono:</strong> ${pedido.customer_phone}</p>
+                    <p><strong>Dirección:</strong> ${pedido.address}</p>
+                    <p><strong>Porte:</strong> ${pedido.shipping_cost}€</p>
+                    <p><strong>Estado:</strong> ${pedido.status}</p>
+                `;
+                const opt = { margin: 10, filename: pedido.invoice_number + '.pdf', image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2 }, jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' } };
+                html2pdf().set(opt).from(element).save();
+            },
+
+            switchTab: function(tab) {
+                document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+                document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+                document.getElementById(tab + '-tab').classList.add('active');
+                event.target.classList.add('active');
+                if (tab === 'pedidos') this.cargarPedidos();
+            },
+
+            limpiarFormulario: function() {
                 document.getElementById('invoice').value = '';
                 document.getElementById('customer-name').value = '';
                 document.getElementById('customer-email').value = '';
@@ -961,296 +863,22 @@
                 document.getElementById('representative-phone').value = '';
                 document.getElementById('address').value = '';
                 document.getElementById('references').value = '';
-                document.getElementById('population-search').value = '';
-                document.getElementById('zone').value = '';
-                document.getElementById('has-furniture').checked = false;
                 document.getElementById('needs-assembly').checked = false;
-                document.getElementById('assembly-time-group').classList.add('hidden');
-                document.getElementById('has-elevator').checked = false;
+                document.getElementById('has-furniture').checked = false;
                 document.getElementById('observations').value = '';
+                document.getElementById('population').value = '';
                 this.populacionSeleccionada = null;
-                this.actualizarCostes();
             },
 
-            cargarPedidos: async function() {
-                try {
-                    const records = await firebaseGet();
-                    this.pedidosData = records;
-                    this.mostrarPedidos(this.pedidosData);
-                } catch (err) {
-                    console.error('Error cargando pedidos:', err);
-                    this.mostrarMensaje('crear', '❌ Error al sincronizar con Firebase', 'error');
-                    this.pedidosData = [];
-                }
-            },
-
-            guardarPedidos: function() {
-                localStorage.setItem('maisons_pedidos', JSON.stringify(this.pedidosData));
-            },
-
-            mostrarPedidos: function(pedidos) {
-                if (pedidos.length === 0) {
-                    document.getElementById('tabla-pedidos').innerHTML = '<p style="text-align: center; padding: 40px; color: #999;">Sin pedidos registrados</p>';
-                    return;
-                }
-                let html = `<table><thead><tr><th>Factura</th><th>Cliente</th><th>Población</th><th>Estado</th><th>Total</th><th>Creado</th><th>Entrega</th><th>Acciones</th></tr></thead><tbody>`;
-                pedidos.forEach(p => {
-                    const total = (p.shipping_cost + p.assembly_cost).toFixed(2);
-                    const fechaCreacion = new Date(p.created_at).toLocaleDateString('es-ES');
-                    const fechaEntrega = p.delivery_date ? new Date(p.delivery_date).toLocaleDateString('es-ES') : '-';
-                    const badge = this.getStatusBadge(p.status);
-                    html += `
-                        <tr>
-                            <td><strong>${p.invoice_number}</strong></td>
-                            <td>${p.customer_name}</td>
-                            <td>${p.populations?.zone || '-'}</td>
-                            <td>${badge}</td>
-                            <td>${total}€</td>
-                            <td>${fechaCreacion}</td>
-                            <td><strong>${fechaEntrega}</strong></td>
-                            <td>
-                                <button class="btn-secondary" onclick="app.verDetalles('${p.id}')">Ver</button>
-                                <button class="btn-warning" onclick="app.editarPedido('${p.id}')">Editar</button>
-                            </td>
-                        </tr>
-                    `;
-                });
-                html += `</tbody></table>`;
-                document.getElementById('tabla-pedidos').innerHTML = html;
-            },
-
-            verDetalles: function(pedidoId) {
-                const pedido = this.pedidosData.find(p => p.id === pedidoId);
-                if (!pedido) return;
-                const total = (pedido.shipping_cost + pedido.assembly_cost).toFixed(2);
-                let html = `
-                    <div style="font-size: 14px; line-height: 2;">
-                        <p><strong>Factura:</strong> ${pedido.invoice_number}</p>
-                        <p><strong>Estado:</strong> ${this.getStatusBadge(pedido.status)}</p>
-                        <p><strong>Cliente:</strong> ${pedido.customer_name}</p>
-                        <p><strong>Email:</strong> ${pedido.customer_email || '-'}</p>
-                        <p><strong>Teléfono:</strong> ${pedido.customer_phone || '-'}</p>
-                        <p><strong>Dirección:</strong> ${pedido.address}</p>
-                        <p><strong>Población:</strong> ${pedido.populations?.name}</p>
-                        <p><strong>Porte:</strong> ${pedido.shipping_cost.toFixed(2)}€</p>
-                        <p><strong>Montaje:</strong> ${pedido.assembly_cost.toFixed(2)}€</p>
-                        <p><strong>Fecha Entrega:</strong> ${pedido.delivery_date || 'Pendiente'}</p>
-                        <p><strong style="font-size: 16px;">TOTAL: ${total}€</strong></p>
-                    </div>
-                `;
-                document.getElementById('modal-body').innerHTML = html;
-                document.getElementById('modal-pedido').classList.add('active');
-            },
-
-            editarPedido: function(pedidoId) {
-                this.pedidoEditando = this.pedidosData.find(p => p.id === pedidoId);
-                if (!this.pedidoEditando) return;
-
-                let html = `
-                    <div style="font-size: 14px;">
-                        <div class="form-group">
-                            <label>Estado:</label>
-                            <select id="edit-status">
-                                <option value="registrado" ${this.pedidoEditando.status === 'registrado' ? 'selected' : ''}>📝 Registrado</option>
-                                <option value="confirmado" ${this.pedidoEditando.status === 'confirmado' ? 'selected' : ''}>⏰ Confirmado</option>
-                                <option value="en_reparto" ${this.pedidoEditando.status === 'en_reparto' ? 'selected' : ''}>🚗 En Reparto</option>
-                                <option value="entregado" ${this.pedidoEditando.status === 'entregado' ? 'selected' : ''}>✅ Entregado</option>
-                                <option value="no_disponible" ${this.pedidoEditando.status === 'no_disponible' ? 'selected' : ''}>❌ No Disponible</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Fecha de Entrega:</label>
-                            <input type="date" id="edit-delivery-date" value="${this.pedidoEditando.delivery_date || ''}">
-                        </div>
-                        <div class="form-group">
-                            <label>Persona que Recibe:</label>
-                            <input type="text" id="edit-delivery-person" value="${this.pedidoEditando.delivery_person_name || ''}">
-                        </div>
-                        <div class="form-group">
-                            <label>Foto del Albarán:</label>
-                            <input type="file" id="edit-delivery-photo" accept="image/*">
-                        </div>
-                        <button class="btn-success" onclick="app.descargarAlbaran('${this.pedidoEditando.id}')">📄 Descargar Albarán PDF</button>
-                    </div>
-                `;
-                document.getElementById('modal-editar-body').innerHTML = html;
-                document.getElementById('modal-editar').classList.add('active');
-            },
-
-            guardarPedidoEditado: async function() {
-                if (!this.pedidoEditando) return;
-                this.pedidoEditando.status = document.getElementById('edit-status').value;
-                this.pedidoEditando.delivery_date = document.getElementById('edit-delivery-date').value;
-                this.pedidoEditando.delivery_person_name = document.getElementById('edit-delivery-person').value;
-                
-                if (this.pedidoEditando.delivery_date && this.pedidoEditando.delivery_person_name) {
-                    this.pedidoEditando.status = 'confirmado';
-                }
-                
-                try {
-                    await firebasePut(this.pedidoEditando.id, {
-                        status: this.pedidoEditando.status,
-                        delivery_date: this.pedidoEditando.delivery_date,
-                        delivery_person_name: this.pedidoEditando.delivery_person_name
-                    });
-                    
-                    this.mostrarPedidos(this.pedidosData);
-                    this.cerrarModalEditar();
-                    alert('✅ Pedido actualizado correctamente');
-                } catch (err) {
-                    alert(`❌ Error: ${err.message}`);
-                }
-            },
-
-            descargarAlbaran: function(pedidoId) {
-                const pedido = this.pedidosData.find(p => p.id === pedidoId);
-                if (!pedido) return;
-
-                const fechaHoy = new Date().toLocaleDateString('es-ES');
-                const element = document.createElement('div');
-                element.innerHTML = `
-                    <div style="padding: 30px; font-family: Arial; line-height: 1.8; font-size: 12px;">
-                        <div style="text-align: center; margin-bottom: 30px; border-bottom: 3px solid #000; padding-bottom: 15px;">
-                            <h1 style="margin: 0; font-size: 24px;">ALBARÁN DE ENTREGA</h1>
-                            <p style="margin: 5px 0;">Maisons du Monde - Andorra</p>
-                        </div>
-                        
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px;">
-                            <div style="border: 2px solid #000; padding: 15px;">
-                                <p style="margin: 0 0 10px 0;"><strong>DATOS DEL PEDIDO</strong></p>
-                                <p style="margin: 5px 0;"><strong>Nº Factura:</strong> ${pedido.invoice_number}</p>
-                                <p style="margin: 5px 0;"><strong>Fecha Creación:</strong> ${new Date(pedido.created_at).toLocaleDateString('es-ES')}</p>
-                                <p style="margin: 5px 0;"><strong>Fecha Entrega:</strong> ${pedido.delivery_date || 'Pendiente'}</p>
-                                <p style="margin: 5px 0;"><strong>Estado:</strong> ${pedido.status.toUpperCase()}</p>
-                            </div>
-                            
-                            <div style="border: 2px solid #000; padding: 15px;">
-                                <p style="margin: 0 0 10px 0;"><strong>DATOS DEL CLIENTE</strong></p>
-                                <p style="margin: 5px 0;"><strong>Nombre:</strong> ${pedido.customer_name}</p>
-                                <p style="margin: 5px 0;"><strong>Teléfono:</strong> ${pedido.customer_phone || '-'}</p>
-                                <p style="margin: 5px 0;"><strong>Email:</strong> ${pedido.customer_email || '-'}</p>
-                                ${pedido.representative_name ? `<p style="margin: 5px 0;"><strong>Representante:</strong> ${pedido.representative_name}</p>` : ''}
-                                ${pedido.representative_phone ? `<p style="margin: 5px 0;"><strong>Tel. Representante:</strong> ${pedido.representative_phone}</p>` : ''}
-                                <p style="margin: 5px 0;"><strong>Recibe:</strong> ${pedido.delivery_person_name || '-'}</p>
-                            </div>
-                        </div>
-
-                        <div style="border: 2px solid #000; padding: 15px; margin-bottom: 30px;">
-                            <p style="margin: 0 0 10px 0;"><strong>DOMICILIO</strong></p>
-                            <p style="margin: 5px 0;"><strong>Dirección:</strong> ${pedido.address}</p>
-                            <p style="margin: 5px 0;"><strong>Población:</strong> ${pedido.populations?.name || '-'}</p>
-                            <p style="margin: 5px 0;"><strong>Zona:</strong> ${pedido.populations?.zone || '-'}</p>
-                            <p style="margin: 5px 0;"><strong>Con Ascensor:</strong> ${pedido.has_elevator ? 'SÍ' : 'NO'}</p>
-                        </div>
-
-                        ${pedido.references ? `
-                        <div style="border: 2px solid #000; padding: 15px; margin-bottom: 30px;">
-                            <p style="margin: 0 0 10px 0;"><strong>REFERENCIAS</strong></p>
-                            <p style="margin: 5px 0; white-space: pre-wrap; font-size: 11px;">${pedido.references}</p>
-                        </div>
-                        ` : ''}
-
-                        <div style="border: 2px solid #000; padding: 15px; margin-bottom: 30px;">
-                            <p style="margin: 0 0 10px 0;"><strong>LOGÍSTICA</strong></p>
-                            <p style="margin: 5px 0;"><strong>Lleva Mueble:</strong> ${pedido.has_furniture ? 'SÍ' : 'NO'}</p>
-                        </div>
-
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px;">
-                            <div style="border: 2px solid #000; padding: 15px;">
-                                <p style="margin: 0 0 10px 0;"><strong>COSTES</strong></p>
-                                <p style="margin: 5px 0;"><strong>Porte:</strong> ${pedido.shipping_cost.toFixed(2)}€${pedido.has_furniture ? ' (con mueble)' : ''}</p>
-                                <p style="margin: 5px 0;"><strong>Montaje:</strong> ${pedido.assembly_cost.toFixed(2)}€</p>
-                                <p style="margin: 5px 0; border-top: 1px solid #000; padding-top: 5px; font-size: 14px;"><strong>TOTAL: ${(pedido.shipping_cost + pedido.assembly_cost).toFixed(2)}€</strong></p>
-                            </div>
-                            
-                            <div style="border: 2px solid #000; padding: 15px;">
-                                <p style="margin: 0 0 10px 0;"><strong>INFORMACIÓN ENTREGA</strong></p>
-                                <p style="margin: 5px 0;"><strong>Lleva Mueble:</strong> ${pedido.has_furniture ? 'SÍ' : 'NO'}</p>
-                                <p style="margin: 5px 0;"><strong>Necesita Montaje:</strong> ${pedido.needs_assembly ? 'SÍ' : 'NO'}</p>
-                                ${pedido.needs_assembly ? `<p style="margin: 5px 0;"><strong>Tiempo Montaje:</strong> ${pedido.assembly_time} min</p>` : ''}
-                                <p style="margin: 5px 0;"><strong>Creado por:</strong> ${EMPLEADOS[pedido.created_by_employee_id] || '-'}</p>
-                            </div>
-                        </div>
-
-                        <div style="border: 2px solid #000; padding: 15px; margin-bottom: 30px; min-height: 80px;">
-                            <p style="margin: 0 0 10px 0;"><strong>OBSERVACIONES</strong></p>
-                            <p style="margin: 5px 0;">${pedido.observations || '-'}</p>
-                        </div>
-
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 50px;">
-                            <div>
-                                <p style="margin: 0 0 10px 0;"><strong>FIRMA CLIENTE</strong></p>
-                                <p style="font-size: 10px; color: #666;">Nombre: _______________</p>
-                                <div style="border-top: 2px solid #000; margin-top: 50px; height: 30px;"></div>
-                            </div>
-                            <div>
-                                <p style="margin: 0 0 10px 0;"><strong>FIRMA REPARTIDOR</strong></p>
-                                <p style="font-size: 10px; color: #666;">Nombre: _______________</p>
-                                <div style="border-top: 2px solid #000; margin-top: 50px; height: 30px;"></div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-
-                const opt = {
-                    margin: 5,
-                    filename: `albaran-${pedido.invoice_number}.pdf`,
-                    image: { type: 'jpeg', quality: 0.98 },
-                    html2canvas: { scale: 2 },
-                    jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' }
-                };
-                html2pdf().set(opt).from(element).save();
-            },
-
-            getStatusBadge: function(status) {
-                const badges = {
-                    'registrado': '<span class="badge badge-primary">📝 Registrado</span>',
-                    'confirmado': '<span class="badge badge-warning">⏰ Confirmado</span>',
-                    'en_reparto': '<span class="badge badge-warning">🚗 En Reparto</span>',
-                    'entregado': '<span class="badge badge-success">✅ Entregado</span>',
-                    'no_disponible': '<span class="badge badge-danger">❌ No Disponible</span>'
-                };
-                return badges[status] || status;
-            },
-
-            filtrarPedidos: function() {
-                const filtro = document.getElementById('filtro-cliente').value.toLowerCase();
-                const estado = document.getElementById('filtro-estado').value;
-                let filtrados = this.pedidosData.filter(p => 
-                    (p.customer_name.toLowerCase().includes(filtro) || p.invoice_number.toLowerCase().includes(filtro)) &&
-                    (!estado || p.status === estado)
-                );
-                this.mostrarPedidos(filtrados);
-            },
-
-            switchTab: function(tab) {
-                document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
-                document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
-                document.getElementById(tab).classList.add('active');
-                event.target.classList.add('active');
-            },
-
-            cerrarModal: function() {
-                document.getElementById('modal-pedido').classList.remove('active');
-            },
-
-            cerrarModalEditar: function() {
-                document.getElementById('modal-editar').classList.remove('active');
-                this.pedidoEditando = null;
-            },
-
-            mostrarMensaje: function(tab, mensaje, tipo) {
-                const div = document.getElementById(`mensaje-${tab}`);
-                const clase = tipo === 'error' ? 'alert-error' : 'alert-success';
-                div.innerHTML = `<div class="alert ${clase}">${mensaje}</div>`;
-                setTimeout(() => { div.innerHTML = ''; }, 5000);
+            mostrarMensaje: function(elementId, mensaje, tipo) {
+                const element = document.getElementById(elementId);
+                element.textContent = mensaje;
+                element.className = 'message ' + tipo;
+                setTimeout(() => {
+                    element.className = 'message';
+                }, 3000);
             }
         };
-
-        document.getElementById('employee-id').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') app.login();
-        });
-        document.getElementById('employee-id').focus();
     </script>
 </body>
 </html>
