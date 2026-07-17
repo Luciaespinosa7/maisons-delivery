@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Maisons du Monde - Gestión de Entregas</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/index.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -465,11 +466,11 @@
     <div id="login-screen" class="login-screen">
         <div class="login-card">
             <h1>Maisons du Monde Andorra</h1>
-            <p>Gestión de Entregas</p>
+            <p>Gestió de Lliuraments</p>
             <div class="form-group">
-                <input type="text" id="employee-id" placeholder="Número de empleado" onkeypress="if(event.key === 'Enter') app.login()" />
+                <input type="text" id="employee-id" placeholder="Número d'empleat" onkeypress="if(event.key === 'Enter') app.login()" />
             </div>
-            <button class="btn" onclick="app.login()">INICIAR SESIÓN</button>
+            <button class="btn" onclick="app.login()">INICIAR SESSIÓ</button>
             <div id="login-error" class="error-message"></div>
         </div>
     </div>
@@ -482,12 +483,12 @@
                     <h2>Maisons du Monde Andorra</h2>
                     <p>Usuario: <span id="user-name">Usuario</span> <span id="user-id"></span></p>
                 </div>
-                <button class="logout-btn" onclick="app.logout()">Cerrar Sesión</button>
+                <button class="logout-btn" onclick="app.logout()">Tancar Sessió</button>
             </div>
 
             <div class="tabs">
                 <button class="tab-btn active" onclick="app.switchTab('crear')">Crear Pedido</button>
-                <button class="tab-btn" onclick="app.switchTab('pedidos')">Ver Pedidos</button>
+                <button class="tab-btn" onclick="app.switchTab('pedidos')">Veure Pedidos</button>
             </div>
 
             <!-- Tab: Crear Pedido -->
@@ -495,7 +496,7 @@
                 <div id="create-message" class="message"></div>
                 
                 <div class="form-section">
-                    <h3>Datos de Factura</h3>
+                    <h3>Dades de Factura</h3>
                     <div class="form-group">
                         <label>Número de Factura *</label>
                         <input type="text" id="invoice" placeholder="FAC001" />
@@ -503,9 +504,9 @@
                 </div>
 
                 <div class="form-section">
-                    <h3>Datos del Cliente</h3>
+                    <h3>Dades del Client</h3>
                     <div class="form-group">
-                        <label>Nombre del Cliente *</label>
+                        <label>Nom del Client *</label>
                         <input type="text" id="customer-name" />
                     </div>
                     <div class="form-group">
@@ -513,41 +514,41 @@
                         <input type="email" id="customer-email" />
                     </div>
                     <div class="form-group">
-                        <label>Teléfono</label>
+                        <label>Telèfon</label>
                         <input type="tel" id="customer-phone" />
                     </div>
                 </div>
 
                 <div class="form-section">
-                    <h3>Datos del Representante</h3>
+                    <h3>Dades del Representant</h3>
                     <div class="form-group">
-                        <label>Nombre</label>
+                        <label>Nom</label>
                         <input type="text" id="representative-name" />
                     </div>
                     <div class="form-group">
-                        <label>Teléfono</label>
+                        <label>Telèfon</label>
                         <input type="tel" id="representative-phone" />
                     </div>
                 </div>
 
                 <div class="form-section">
-                    <h3>Domicilio de Entrega</h3>
+                    <h3>Domicili de Lliurament</h3>
                     <div class="form-group">
-                        <label>Dirección *</label>
+                        <label>Adreça *</label>
                         <input type="text" id="address" />
                     </div>
                     <div class="form-group">
-                        <label>Población *</label>
+                        <label>Població *</label>
                         <div class="population-search-wrapper">
-                            <input type="text" id="population-search" class="population-search-input" placeholder="Buscar población..." onkeyup="app.filtrarPoblaciones()" onfocus="app.abrirDropdown()" />
+                            <input type="text" id="population-search" class="population-search-input" placeholder="Cercar població..." onkeyup="app.filtrarPoblaciones()" onfocus="app.abrirDropdown()" />
                             <div id="population-dropdown" class="population-dropdown"></div>
                         </div>
                     </div>
                     <div id="zone-info" class="zone-display" style="display: none;">
-                        Zona: <span id="zone-value">--</span> | Parroquia: <span id="parish-value">--</span>
+                        Zona: <span id="zone-value">--</span> | Parròquia: <span id="parish-value">--</span>
                     </div>
                     <div class="form-group">
-                        <label>Referencias</label>
+                        <label>Referències</label>
                         <textarea id="references" rows="3"></textarea>
                     </div>
                 </div>
@@ -557,28 +558,28 @@
                     <div class="form-group">
                         <div class="checkbox-group">
                             <input type="checkbox" id="needs-assembly" onchange="app.actualizarCostes()" />
-                            <label for="needs-assembly">Requiere Montaje</label>
+                            <label for="needs-assembly">Requereix Muntatge</label>
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="checkbox-group">
                             <input type="checkbox" id="has-furniture" onchange="app.actualizarCostes()" />
-                            <label for="has-furniture">Lleva Mueble</label>
+                            <label for="has-furniture">Porta Moble</label>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label>Observaciones</label>
+                        <label>Observacions</label>
                         <textarea id="observations" rows="3"></textarea>
                     </div>
                 </div>
 
                 <div class="cost-summary">
                     <div class="cost-row">
-                        <span>Porte:</span>
+                        <span>Port:</span>
                         <span id="shipping-cost">0.00€</span>
                     </div>
                     <div class="cost-row">
-                        <span>Montaje:</span>
+                        <span>Muntatge:</span>
                         <span id="assembly-cost">0.00€</span>
                     </div>
                     <div class="cost-row total">
@@ -590,9 +591,9 @@
                 <button class="btn-primary" onclick="app.crearPedido()">CREAR PEDIDO</button>
             </div>
 
-            <!-- Tab: Ver Pedidos -->
+            <!-- Tab: Veure Pedidos -->
             <div id="pedidos-tab" class="tab-content">
-                <button class="btn-primary" onclick="app.cargarPedidos()">Recargar Pedidos</button>
+                <button class="btn-primary" onclick="app.cargarPedidos()">Recarregar Pedidos</button>
                 <div id="pedidos-list" class="pedidos-list" style="margin-top: 20px;"></div>
             </div>
         </div>
@@ -606,35 +607,38 @@
                 <button class="close-modal" onclick="app.cerrarModalEditar()">×</button>
             </div>
             <div class="form-group">
-                <label>Estado</label>
+                <label>Estat</label>
                 <select id="edit-status">
-                    <option value="registrado">Registrado</option>
-                    <option value="preparado">Preparado</option>
-                    <option value="confirmado">Confirmado</option>
-                    <option value="entregado">Entregado</option>
+                    <option value="registrado">Registrat</option>
+                    <option value="preparado">Preparat</option>
+                    <option value="confirmado">Confirmat</option>
+                    <option value="entregado">Entregat</option>
                 </select>
             </div>
             <div class="form-group">
-                <label>Fecha de Entrega</label>
+                <label>Data de Lliurament</label>
                 <input type="date" id="edit-delivery-date" />
             </div>
             <div class="form-group">
-                <label>Persona de Entrega</label>
+                <label>Persona de Lliurament</label>
                 <input type="text" id="edit-delivery-person" />
             </div>
             <div class="form-group">
-                <label>Foto Albarán Firmado (JPG/PNG)</label>
+                <label>Foto Albarán Firmat (JPG/PNG)</label>
                 <input type="file" id="edit-delivery-photo" accept="image/jpeg,image/png" />
                 <div id="photo-preview" style="margin-top: 10px;"></div>
             </div>
-            <button class="btn-primary" onclick="app.guardarPedidoEditado()">Guardar Cambios</button>
-            <button class="btn-primary" style="background: #d32f2f; margin-left: 10px;" id="delete-photo-btn" style="display: none;" onclick="app.borrarFotoAlbaran()">Borrar Foto</button>
+            <button class="btn-primary" onclick="app.guardarPedidoEditado()">Guardar Canvis</button>
+            <button class="btn-primary" style="background: #d32f2f; margin-left: 10px;" id="delete-photo-btn" style="display: none;" onclick="app.borrarFotoAlbaran()">Esborrar Foto</button>
         </div>
     </div>
 
     <script>
         // Firebase REST API
         const FIREBASE_DB_URL = 'https://maisons-delivery-default-rtdb.europe-west1.firebasedatabase.app/pedidos';
+
+        // Inicializar EmailJS
+        emailjs.init('Yx691AjGkHsVptqiH');
 
         async function firebaseGet() {
             try {
@@ -769,12 +773,12 @@
             login: function() {
                 const employeeId = document.getElementById('employee-id').value.trim();
                 if (!employeeId) {
-                    document.getElementById('login-error').textContent = 'Ingresa tu número de empleado';
+                    document.getElementById('login-error').textContent = 'Ingresa el teu número d\'empleat';
                     document.getElementById('login-error').style.display = 'block';
                     return;
                 }
                 if (!EMPLEADOS[employeeId]) {
-                    document.getElementById('login-error').textContent = 'Número de empleado no válido';
+                    document.getElementById('login-error').textContent = 'Número d\'empleat no vàlid';
                     document.getElementById('login-error').style.display = 'block';
                     return;
                 }
@@ -879,7 +883,7 @@
                 const observations = document.getElementById('observations').value.trim();
 
                 if (!invoice || !customerName || !address || !this.populacionSeleccionada) {
-                    this.mostrarMensaje('create-message', 'Completa todos los campos obligatorios', 'error');
+                    this.mostrarMensaje('create-message', 'Completa tots els camps obligatoris', 'error');
                     return;
                 }
 
@@ -909,11 +913,37 @@
 
                 try {
                     await firebasePost(pedidoData);
-                    this.mostrarMensaje('create-message', `✅ Pedido creado: ${invoice}`, 'success');
+                    
+                    // Enviar email al equipo de logística
+                    await this.enviarEmailLogistica(pedidoData);
+                    
+                    this.mostrarMensaje('create-message', `✅ Pedido creat: ${invoice}`, 'success');
                     this.limpiarFormulario();
                     await this.cargarPedidos();
                 } catch (error) {
-                    this.mostrarMensaje('create-message', '❌ Error al crear pedido: ' + error.message, 'error');
+                    this.mostrarMensaje('create-message', '❌ Error en crear pedido: ' + error.message, 'error');
+                }
+            },
+
+            enviarEmailLogistica: async function(pedidoData) {
+                try {
+                    await emailjs.send('service_prjsf2c', 'template_he6ten1', {
+                        invoice_number: pedidoData.invoice_number,
+                        customer_name: pedidoData.customer_name,
+                        customer_phone: pedidoData.customer_phone,
+                        address: pedidoData.address,
+                        population: pedidoData.population,
+                        zone: pedidoData.zone,
+                        shipping_cost: pedidoData.shipping_cost.toFixed(2),
+                        assembly_cost: pedidoData.assembly_cost.toFixed(2),
+                        total_cost: (pedidoData.shipping_cost + pedidoData.assembly_cost).toFixed(2),
+                        has_furniture: pedidoData.has_furniture ? 'Sí' : 'No',
+                        needs_assembly: pedidoData.needs_assembly ? 'Sí' : 'No',
+                        observations: pedidoData.observations || 'Cap'
+                    });
+                    console.log('Email enviat correctament a l\'equip de logística');
+                } catch (error) {
+                    console.error('Error al enviar email:', error);
                 }
             },
 
@@ -930,7 +960,7 @@
             mostrarPedidos: function() {
                 const list = document.getElementById('pedidos-list');
                 if (this.pedidosData.length === 0) {
-                    list.innerHTML = '<p>No hay pedidos</p>';
+                    list.innerHTML = '<p>No hi ha pedidos</p>';
                     return;
                 }
                 list.innerHTML = this.pedidosData.map(p => `
@@ -940,17 +970,17 @@
                             <span class="status-badge ${p.status}">${p.status}</span>
                         </div>
                         <div class="pedido-detail">
-                            <span><strong>Cliente:</strong> ${p.customer_name}</span>
-                            <span><strong>Teléfono:</strong> ${p.customer_phone}</span>
-                            <span><strong>Población:</strong> ${p.population || '--'}</span>
+                            <span><strong>Client:</strong> ${p.customer_name}</span>
+                            <span><strong>Telèfon:</strong> ${p.customer_phone}</span>
+                            <span><strong>Població:</strong> ${p.population || '--'}</span>
                             <span><strong>Zona:</strong> ${p.zone || '--'}</span>
-                            <span><strong>Dirección:</strong> ${p.address}</span>
-                            <span><strong>Porte:</strong> ${p.shipping_cost}€${p.has_furniture ? ' (con mueble)' : ''}</span>
+                            <span><strong>Adreça:</strong> ${p.address}</span>
+                            <span><strong>Port:</strong> ${p.shipping_cost}€${p.has_furniture ? ' (amb moble)' : ''}</span>
                         </div>
                         <div class="pedido-actions">
                             <button class="btn-small" onclick="app.abrirModalEditar('${p.id}')">Editar</button>
                             <button class="btn-small" onclick="app.descargarAlbaran('${p.id}')">Albarán</button>
-                            <button class="btn-small" style="background: #d32f2f;" onclick="app.eliminarPedido('${p.id}')">Eliminar</button>
+                            <button class="btn-small" style="background: #d32f2f;" onclick="app.eliminarPedido('${p.id}')">Esborrar</button>
                         </div>
                     </div>
                 `).join('');
@@ -1034,28 +1064,28 @@
                     await firebasePut(this.pedidoEditando.id, updateData);
                     await this.cargarPedidos();
                     this.cerrarModalEditar();
-                    alert('✅ Pedido actualizado - Estado: ' + status.toUpperCase());
+                    alert('✅ Pedido actualitzat - Estat: ' + status.toUpperCase());
                 } catch (error) {
                     alert('❌ Error: ' + error.message);
                 }
             },
 
             eliminarPedido: async function(id) {
-                if (!confirm('¿Estás seguro de que quieres eliminar este pedido? Esta acción no se puede deshacer.')) {
+                if (!confirm('¿Estàs segur que vols esborrar aquest pedido? Aquesta acció no es pot desfer.')) {
                     return;
                 }
                 try {
                     await firebaseDelete(id);
                     await this.cargarPedidos();
-                    alert('✅ Pedido eliminado correctamente');
+                    alert('✅ Pedido esborrat correctament');
                 } catch (error) {
-                    alert('❌ Error al eliminar: ' + error.message);
+                    alert('❌ Error en esborrar: ' + error.message);
                 }
             },
 
             borrarFotoAlbaran: async function() {
                 if (!this.pedidoEditando) return;
-                if (!confirm('¿Estás seguro de que quieres borrar la foto del albarán?')) {
+                if (!confirm('¿Estàs segur que vols esborrar la foto de l\'albarán?')) {
                     return;
                 }
                 
@@ -1072,7 +1102,7 @@
                     });
                     await this.cargarPedidos();
                     this.cerrarModalEditar();
-                    alert('✅ Foto del albarán eliminada');
+                    alert('✅ Foto de l\'albarán esborrada');
                 } catch (error) {
                     alert('❌ Error: ' + error.message);
                 }
@@ -1102,32 +1132,32 @@
 
                     <div style="margin-bottom: 30px;">
                         <div style="display: inline-block; width: 48%; vertical-align: top;">
-                            <p style="font-size: 11px; color: #666; margin: 0 0 10px 0;"><strong>CLIENTE</strong></p>
+                            <p style="font-size: 11px; color: #666; margin: 0 0 10px 0;"><strong>CLIENT</strong></p>
                             <p style="font-size: 13px; margin: 0; font-weight: bold;">${pedido.customer_name}</p>
                             <p style="font-size: 11px; margin: 5px 0 0 0; color: #666;">${pedido.address}</p>
                             <p style="font-size: 11px; margin: 3px 0 0 0; color: #666;">${pedido.population}</p>
                             ${pedido.customer_phone ? `<p style="font-size: 11px; margin: 5px 0 0 0; color: #666;">Tel: ${pedido.customer_phone}</p>` : ''}
                         </div>
                         <div style="display: inline-block; width: 48%; text-align: right; vertical-align: top;">
-                            <p style="font-size: 11px; color: #666; margin: 0 0 10px 0;"><strong>REFERENCIA</strong></p>
+                            <p style="font-size: 11px; color: #666; margin: 0 0 10px 0;"><strong>REFERÈNCIA</strong></p>
                             <p style="font-size: 16px; margin: 0; font-weight: bold; color: #1a1a1a;">${pedido.invoice_number}</p>
-                            <p style="font-size: 11px; margin: 10px 0 0 0; color: #666;">Fecha emisión: ${fecha}</p>
-                            ${pedido.delivery_date ? `<p style="font-size: 11px; margin: 3px 0 0 0; color: #666;">Fecha entrega: ${pedido.delivery_date}</p>` : ''}
+                            <p style="font-size: 11px; margin: 10px 0 0 0; color: #666;">Data d'emissió: ${fecha}</p>
+                            ${pedido.delivery_date ? `<p style="font-size: 11px; margin: 3px 0 0 0; color: #666;">Data lliurament: ${pedido.delivery_date}</p>` : ''}
                         </div>
                     </div>
 
                     <table style="width: 100%; margin: 30px 0; border-collapse: collapse; font-size: 12px;">
                         <tr style="border-bottom: 1px solid #ddd;">
-                            <th style="text-align: left; padding: 8px 0; font-weight: bold; color: #1a1a1a;">CONCEPTO</th>
-                            <th style="text-align: right; padding: 8px 0; font-weight: bold; color: #1a1a1a;">IMPORTE</th>
+                            <th style="text-align: left; padding: 8px 0; font-weight: bold; color: #1a1a1a;">CONCEPTE</th>
+                            <th style="text-align: right; padding: 8px 0; font-weight: bold; color: #1a1a1a;">IMPORT</th>
                         </tr>
                         <tr style="border-bottom: 1px solid #eee;">
-                            <td style="padding: 8px 0;">Porte${pedido.has_furniture ? ' (con mueble)' : ''}</td>
+                            <td style="padding: 8px 0;">Port${pedido.has_furniture ? ' (amb moble)' : ''}</td>
                             <td style="text-align: right; padding: 8px 0;">${pedido.shipping_cost.toFixed(2)}€</td>
                         </tr>
                         ${pedido.assembly_cost > 0 ? `
                         <tr style="border-bottom: 1px solid #eee;">
-                            <td style="padding: 8px 0;">Montaje</td>
+                            <td style="padding: 8px 0;">Muntatge</td>
                             <td style="text-align: right; padding: 8px 0;">${pedido.assembly_cost.toFixed(2)}€</td>
                         </tr>
                         ` : ''}
@@ -1138,30 +1168,30 @@
                     </table>
 
                     <div style="margin: 30px 0; padding: 15px; background: #f5f5f5; border-left: 3px solid #1a1a1a;">
-                        <p style="font-size: 11px; color: #666; margin: 0 0 8px 0;"><strong>ESTADO DEL PEDIDO</strong></p>
+                        <p style="font-size: 11px; color: #666; margin: 0 0 8px 0;"><strong>ESTAT DEL PEDIDO</strong></p>
                         <p style="font-size: 13px; margin: 0; font-weight: bold; color: #1a1a1a;">
-                            ${pedido.status === 'entregado' ? 'ENTREGADO ✓' : pedido.status === 'confirmado' ? 'CONFIRMADO' : pedido.status === 'preparado' ? 'PREPARADO' : 'REGISTRADO'}
+                            ${pedido.status === 'entregado' ? 'ENTREGAT ✓' : pedido.status === 'confirmado' ? 'CONFIRMAT' : pedido.status === 'preparado' ? 'PREPARAT' : 'REGISTRAT'}
                         </p>
-                        ${pedido.delivery_person_name ? `<p style="font-size: 11px; margin: 8px 0 0 0; color: #666;">Entregado por: ${pedido.delivery_person_name}</p>` : ''}
+                        ${pedido.delivery_person_name ? `<p style="font-size: 11px; margin: 8px 0 0 0; color: #666;">Lliurat per: ${pedido.delivery_person_name}</p>` : ''}
                     </div>
 
                     ${pedido.delivery_photo_url ? `
                     <div style="margin: 30px 0; padding: 15px; background: #f5f5f5; border-left: 3px solid #1a1a1a;">
-                        <p style="font-size: 11px; color: #666; margin: 0 0 10px 0;"><strong>ALBARÁN FIRMADO</strong></p>
+                        <p style="font-size: 11px; color: #666; margin: 0 0 10px 0;"><strong>ALBARÁN FIRMAT</strong></p>
                         <img src="${pedido.delivery_photo_url}" style="max-width: 100%; height: auto; border: 1px solid #ddd; border-radius: 4px;" />
                     </div>
                     ` : ''}
 
                     ${pedido.references ? `
                     <div style="margin-top: 20px;">
-                        <p style="font-size: 11px; color: #666; margin: 0 0 5px 0;"><strong>REFERENCIAS DEL CLIENTE</strong></p>
+                        <p style="font-size: 11px; color: #666; margin: 0 0 5px 0;"><strong>REFERÈNCIES DEL CLIENT</strong></p>
                         <p style="font-size: 11px; margin: 0; color: #333; white-space: pre-wrap;">${pedido.references}</p>
                     </div>
                     ` : ''}
 
                     <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #ddd; text-align: center;">
-                        <p style="font-size: 10px; color: #999; margin: 0;">Albarán de entrega - Maisons du Monde Andorra</p>
-                        <p style="font-size: 10px; color: #999; margin: 5px 0 0 0;">Generado: ${new Date().toLocaleString('es-ES')}</p>
+                        <p style="font-size: 10px; color: #999; margin: 0;">Albarán de lliurament - Maisons du Monde Andorra</p>
+                        <p style="font-size: 10px; color: #999; margin: 5px 0 0 0;">Generat: ${new Date().toLocaleString('ca-AD')}</p>
                     </div>
                 `;
                 
