@@ -468,9 +468,9 @@
             <h1>Maisons du Monde Andorra</h1>
             <p>Gestió de Lliuraments</p>
             <div class="form-group">
-                <input type="text" id="employee-id" placeholder="Número d'empleat" onkeypress="if(event.key === 'Enter') app.login()" />
+                <input type="text" id="employee-id" placeholder="Número d'empleat" />
             </div>
-            <button class="btn" onclick="app.login()">INICIAR SESSIÓ</button>
+            <button class="btn" id="login-btn">INICIAR SESSIÓ</button>
             <div id="login-error" class="error-message"></div>
         </div>
     </div>
@@ -636,9 +636,6 @@
     <script>
         // Firebase REST API
         const FIREBASE_DB_URL = 'https://maisons-delivery-default-rtdb.europe-west1.firebasedatabase.app/pedidos';
-
-        // Inicializar EmailJS
-        emailjs.init('Yx691AjGkHsVptqiH');
 
         async function firebaseGet() {
             try {
@@ -1239,6 +1236,31 @@
                 }, 3000);
             }
         };
+
+        // Agregar event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginBtn = document.getElementById('login-btn');
+            const employeeInput = document.getElementById('employee-id');
+            
+            if (loginBtn) {
+                loginBtn.addEventListener('click', function() {
+                    app.login();
+                });
+            }
+            
+            if (employeeInput) {
+                employeeInput.addEventListener('keypress', function(event) {
+                    if (event.key === 'Enter') {
+                        app.login();
+                    }
+                });
+            }
+        });
+
+        // Inicializar EmailJS
+        if (typeof emailjs !== 'undefined') {
+            emailjs.init('Yx691AjGkHsVptqiH');
+        }
     </script>
 </body>
 </html>
