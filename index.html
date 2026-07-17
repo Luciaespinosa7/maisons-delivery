@@ -964,25 +964,40 @@ Observacions: ${pedidoData.observations || 'Cap'}
 Maisons du Monde Andorra
                     `;
 
-                    const response = await fetch('https://formspree.io/f/xykrebld', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            message: emailContent,
-                            subject: `Nou Pedido Maisons du Monde - ${pedidoData.invoice_number}`
-                        })
-                    });
+                    // Array de destinatarios
+                    const destinatarios = [
+                        'luciae@viamoda.ad',
+                        'javiers@viamoda.ad',
+                        'etiquetatge_mag@viamoda.ad'
+                    ];
 
-                    if (response.ok) {
-                        console.log('✅ Email enviat correctament a l\'equip de logística via Formspree');
-                        console.log('📧 Destinatari: luciae@viamoda.ad');
-                    } else {
-                        console.warn('⚠️ Formspree resposta: ' + response.status);
+                    // Enviar a cada destinatario
+                    for (const email of destinatarios) {
+                        try {
+                            const response = await fetch('https://formspree.io/f/xykrebld', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({
+                                    message: emailContent,
+                                    subject: `Nou Pedido Maisons du Monde - ${pedidoData.invoice_number}`,
+                                    email: email
+                                })
+                            });
+
+                            if (response.ok) {
+                                console.log('✅ Email enviat a ' + email);
+                            }
+                        } catch (error) {
+                            console.error('⚠️ Error al enviar a ' + email + ':', error);
+                        }
                     }
+
+                    console.log('✅ Tots els emails enviats correctament a l\'equip de logística');
+                    console.log('📧 Destinataris: luciae@viamoda.ad, javiers@viamoda.ad, etiquetatge_mag@viamoda.ad');
                 } catch (error) {
-                    console.error('⚠️ Error al enviar email (pedido igual creat):', error);
+                    console.error('⚠️ Error al enviar emails (pedido igual creat):', error);
                 }
             },
 
